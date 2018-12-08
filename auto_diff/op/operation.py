@@ -16,12 +16,15 @@ class Operation(object):
     def __init__(self, **kwargs):
         if not hasattr(self, 'name'):
             if 'name' in kwargs:
-                self.name = kwargs['name']
+                self.name: str = kwargs['name']
             else:
-                self.name = self._get_name()
+                self.name: str = self._get_name()
         if not hasattr(self, 'shape'):
-            self.shape = None
-        self.gradient = None
+            self.shape: tuple = None
+            raise NotImplementedError('Shape not defined')
+        if not hasattr(self, 'inputs'):
+            self.inputs: Sequence['Operation'] = []
+        self.gradient: Optional['Operation'] = None
         self._op_index = self.__op_counter[0]
         self.__op_counter[0] += 1
         self._op_name = self._get_op_name()
@@ -96,6 +99,10 @@ class Operation(object):
         """See :class:`OpExpandDims`."""
         from .op_squeeze import OpSqueeze
         return OpSqueeze(self, axis)
+
+    def simplify(self) -> 'Operation':
+        from ..simple import simplify
+        return simplify(self)
 
     def __hash__(self):
         return hash(self._op_index)

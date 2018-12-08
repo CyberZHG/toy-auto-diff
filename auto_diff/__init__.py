@@ -1,2 +1,3 @@
-from auto_diff.sess import *
-from auto_diff.op import *
+from .sess import *
+from .op import *
+from .simple import *

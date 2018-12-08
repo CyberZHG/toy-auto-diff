@@ -8,7 +8,7 @@ class OpTranspose(Operation):
     """Transpose the tensor."""
 
     def __init__(self, x: Operation, axes: Optional[Sequence[int]] = None, **kwargs):
-        self.x = x
+        self.inputs = [x]
         self.axes = axes
         if axes is None:
             self.reverse_axes = None
@@ -22,19 +22,19 @@ class OpTranspose(Operation):
 
     def _get_name(self) -> str:
         if self.axes is None:
-            return 'transpose(%s)' % self.x.name
-        return 'transpose(%s, axes=%s)' % (self.x.name, str(self.axes))
+            return 'transpose(%s)' % self.inputs[0].name
+        return 'transpose(%s, axes=%s)' % (self.inputs[0].name, str(self.axes))
 
     def _get_op_name(self) -> str:
         if self.axes is None:
-            return 'transpose(%s)' % self.x._op_name
-        return 'transpose(%s, axes=%s)' % (self.x._op_name, str(self.axes))
+            return 'transpose(%s)' % self.inputs[0]._op_name
+        return 'transpose(%s, axes=%s)' % (self.inputs[0]._op_name, str(self.axes))
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Transpose the tensor."""
-        return np.transpose(self.x.forward(feed_dict), axes=self.axes)
+        return np.transpose(self.inputs[0].forward(feed_dict), axes=self.axes)
 
     def _backward(self, gradient: Operation) -> None:
         """Transpose the gradients to its old shape."""
         self.gradient = gradient.transpose(axes=self.reverse_axes)
-        self.x.backward(self.gradient)
+        self.inputs[0].backward(self.gradient)
