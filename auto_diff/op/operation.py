@@ -56,6 +56,15 @@ class Operation(object):
     def _backward(self, gradient: 'Operation') -> None:
         raise NotImplementedError('Backward operation not implemented')
 
+    def transpose(self, axes: Optional[Sequence[int]] = None):
+        return OpTranspose(self, axes)
+
+    def reshape(self, shape: Sequence[int]):
+        return OpReshape(self, shape)
+
+    def flatten(self):
+        return OpFlatten(self)
+
     def __hash__(self):
         return hash(self._op_index)
 
