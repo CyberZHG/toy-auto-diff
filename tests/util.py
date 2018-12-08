@@ -11,22 +11,28 @@ class NumGradCheck(TestCase):
                                feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray],
                                variables: List[OpVariable]):
         eps = 1e-8
+        func.backward()
         for variable in variables:
             values = variable.forward(feed_dict)
+            shape = values.shape
+            flattened = values.flatten()
             gradient = variable.gradient.forward(feed_dict)
-            numeric_gradient = np.zeros_like(values)
-            it = np.nditer(values, flags=['multi_index'])
-            while not it.finished:
-                i = it.multi_index
-                origin = values[i]
-                values[i] = origin - eps
-                variable.update(values)
+            numeric_gradient = np.zeros_like(flattened, dtype=np.float64)
+            for i in range(flattened.shape[0]):
+                origin = float(flattened[i])
+                flattened[i] = origin - eps
+                variable.update(flattened.reshape(shape))
                 yl = func.forward(feed_dict)
-                values[i] = origin + eps
-                variable.update(values)
+                flattened[i] = origin + eps
+                variable.update(flattened.reshape(shape))
                 yu = func.forward(feed_dict)
-                values[i] = origin
-                variable.update(values)
+                flattened[i] = origin
+                variable.update(flattened.reshape(shape))
                 numeric_gradient[i] = np.sum(yu - yl) / (eps * 2)
-                it.iternext()
-            self.assertTrue(np.allclose(numeric_gradient, gradient), (variable, numeric_gradient, gradient))
+            numeric_gradient = numeric_gradient.reshape(shape)
+            self.assertTrue(np.allclose(numeric_gradient, gradient), (
+                str(variable),
+                str(variable.gradient),
+                numeric_gradient,
+                gradient,
+            ))

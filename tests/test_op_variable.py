@@ -21,7 +21,6 @@ class TestOpVariable(NumGradCheck):
 
     def test_backward(self):
         w = OpVariable(np.random.random((2, 3)))
-        w.backward()
         self.numeric_gradient_check(w, {}, [w])
 
     def test_name(self):

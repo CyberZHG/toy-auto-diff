@@ -1,7 +1,7 @@
-from typing import Union, Mapping, Callable
+from typing import Union, Mapping, Callable, Optional, Sequence
 import numpy as np
 
-__all__ = ['Operation', 'OpConstant', 'OpPlaceholder', 'OpVariable']
+__all__ = ['Operation', 'OpConstant', 'OpPlaceholder', 'OpVariable', 'OpTranspose']
 
 
 class Operation(object):
@@ -49,7 +49,7 @@ class Operation(object):
 
     def backward(self, gradient: 'Operation' = None) -> str:
         if gradient is None:
-            gradient = OpConstant(np.ones(self.shape))
+            gradient = OpConstant(np.ones(self.shape), name='ones%s' % str(self.shape))
         self.gradient = gradient
         self._backward(gradient)
 
@@ -66,14 +66,16 @@ class Operation(object):
         return self.name
 
     def __unicode__(self):
-        return self.name
+        return self.__str__()
 
 
 class OpConstant(Operation):
 
     def __init__(self, x: Union[int, float, list, np.ndarray], **kwargs):
+        if isinstance(x, int):
+            x = float(x)
         if not np.isscalar(x) and not isinstance(x, np.ndarray):
-            x = np.asarray(x)
+            x = np.array(x, dtype=np.float64)
         self.x = x
         if np.isscalar(x):
             self.shape = (1,)
@@ -121,7 +123,7 @@ class OpVariable(Operation):
         if callable(initializer):
             self.x = initializer(shape)
         else:
-            self.x = np.asarray(initializer)
+            self.x = np.array(initializer, dtype=np.float64)
         self.shape = self.x.shape
         super(OpVariable, self).__init__(**kwargs)
 
@@ -143,3 +145,34 @@ class OpVariable(Operation):
 
     def _backward(self, gradient: 'Operation') -> None:
         pass
+
+
+class OpTranspose(Operation):
+
+    def __init__(self, x: Operation, axes: Optional[Sequence[int]] = None, **kwargs):
+        self.x = x
+        self.axes = axes
+        if axes is None:
+            self.reverse_axes = None
+            self.shape = tuple(reversed(x.shape))
+        else:
+            self.reverse_axes = [0] * len(axes)
+            for i, axis in enumerate(axes):
+                self.reverse_axes[axis] = i
+            self.shape = tuple(x.shape[axis] for axis in axes)
+        super(OpTranspose, self).__init__(**kwargs)
+
+    def _get_name(self) -> str:
+        return '(%s)^T' % str(self.x)
+
+    def _get_op_name(self) -> str:
+        if self.axes is None:
+            return 'transpose(%s)' % self.x._get_op_name()
+        return 'tranpose(%s, axes=%s)' % (self.x._get_op_name(), str(self.axes))
+
+    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
+        return np.transpose(self.x.forward(feed_dict), axes=self.axes)
+
+    def _backward(self, gradient: 'Operation') -> None:
+        self.gradient = OpTranspose(gradient, axes=self.reverse_axes)
+        self.x.backward(self.gradient)

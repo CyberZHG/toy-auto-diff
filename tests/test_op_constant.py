@@ -15,6 +15,6 @@ class TestOpConstant(TestCase):
         OpConstant(np.array(0.0)).backward()
 
     def test_name(self):
-        self.assertEqual('0.0', str(OpConstant(0.0)))
+        self.assertEqual('0.0', str(OpConstant(0)))
         self.assertEqual('C(1,)', OpConstant([1.0]).__str__())
         self.assertEqual('C(1, 1)', OpConstant([[1.0]]).__unicode__())
