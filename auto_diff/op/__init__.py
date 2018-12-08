@@ -1,4 +1,4 @@
-from .operation import Operation
+from .operation import Operation, array
 
 from .op_constant import OpConstant
 from .op_placeholder import OpPlaceholder

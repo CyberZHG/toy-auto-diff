@@ -2,6 +2,12 @@ from typing import Union, Mapping, Optional, Sequence
 import numpy as np
 
 
+def array(x: Union[int, float, list, np.ndarray]):
+    """See :class:`OpConstant`."""
+    from .op_constant import OpConstant
+    return OpConstant(x)
+
+
 class Operation(object):
     """Abstract operation for building computing graph."""
 
@@ -96,7 +102,7 @@ class Operation(object):
         return OpExpandDims(self, axis)
 
     def squeeze(self, axis=None) -> 'Operation':
-        """See :class:`OpExpandDims`."""
+        """See :class:`OpSqueeze`."""
         from .op_squeeze import OpSqueeze
         return OpSqueeze(self, axis)
 
