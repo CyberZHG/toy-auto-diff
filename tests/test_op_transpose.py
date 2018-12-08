@@ -40,3 +40,7 @@ class TestOpVariable(NumGradCheck):
         w = OpVariable(val)
         wt = OpTranspose(w)
         self.assertEqual('(W(2, 3))^T', wt.__unicode__())
+        val = np.arange(6).reshape((1, 2, 3))
+        w = OpVariable(val)
+        wt = OpTranspose(w, axes=(1, 0, 2))
+        self.assertEqual('transpose(W(1, 2, 3), axes=(1, 0, 2))', wt.__unicode__())

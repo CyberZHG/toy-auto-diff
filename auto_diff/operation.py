@@ -163,12 +163,14 @@ class OpTranspose(Operation):
         super(OpTranspose, self).__init__(**kwargs)
 
     def _get_name(self) -> str:
-        return '(%s)^T' % str(self.x)
+        if self.axes is None:
+            return '(%s)^T' % str(self.x)
+        return 'transpose(%s, axes=%s)' % (self.x._get_name(), str(self.axes))
 
     def _get_op_name(self) -> str:
         if self.axes is None:
             return 'transpose(%s)' % self.x._get_op_name()
-        return 'tranpose(%s, axes=%s)' % (self.x._get_op_name(), str(self.axes))
+        return 'transpose(%s, axes=%s)' % (self.x._get_op_name(), str(self.axes))
 
     def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
         return np.transpose(self.x.forward(feed_dict), axes=self.axes)
