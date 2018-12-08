@@ -6,16 +6,18 @@ __all__ = ['Session']
 
 class Session(object):
 
+    __step = [0]
+
     def __init__(self):
-        self._step: int = 0
+        self.prepare()
 
     def prepare(self):
-        self._step += 1
+        self.__step[0] += 1
 
     def run(self, fetches: Union[Operation, List[Operation], Mapping[str, Operation]], feed_dict=None):
         if feed_dict is None:
             feed_dict = {}
-        feed_dict[Operation.STEP_KEY] = self._step
+        feed_dict[Operation.STEP_KEY] = self.__step[0]
         if isinstance(fetches, Operation):
             return fetches.forward(feed_dict)
         if isinstance(fetches, list):

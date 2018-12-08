@@ -1,11 +1,12 @@
+from typing import Union, Mapping, Callable
 import numpy as np
 
-__all__ = ['Operation', 'OpConstant']
+__all__ = ['Operation', 'OpConstant', 'OpPlaceholder', 'OpVariable']
 
 
 class Operation(object):
 
-    __op_counter = 0
+    __op_counter = [0]
     __op_collection = {}
 
     STEP_KEY = '__step__'
@@ -16,20 +17,23 @@ class Operation(object):
                 self.name = kwargs['name']
             else:
                 self.name = self._get_name()
-        self._op_index = self.__op_counter
-        self.__op_counter += 1
+        if not hasattr(self, 'shape'):
+            self.shape = None
+        self.gradient = None
+        self._op_index = self.__op_counter[0]
+        self.__op_counter[0] += 1
         self._op_name = self._get_op_name()
         self.__op_collection[self] = self
         self._last_step = -1
         self._last_forward = None
 
-    def _get_name(self):
+    def _get_name(self) -> str:
         raise NotImplementedError('Get name not implemented')
 
-    def _get_op_name(self):
+    def _get_op_name(self) -> str:
         raise NotImplementedError('Get operation name not implemented')
 
-    def forward(self, feed_dict: dict = None):
+    def forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray] = None) -> np.ndarray:
         if feed_dict is None:
             feed_dict = {}
         if self.STEP_KEY in feed_dict and feed_dict[self.STEP_KEY] == self._last_step:
@@ -40,15 +44,16 @@ class Operation(object):
             self._last_forward = output
         return output
 
-    def _forward(self, feed_dict: dict):
+    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
         raise NotImplementedError('Forward operation not implemented')
 
-    def backward(self, gradient: 'Operation' = None):
+    def backward(self, gradient: 'Operation' = None) -> str:
         if gradient is None:
-            gradient = OpConstant(1.0)
+            gradient = OpConstant(np.ones(self.shape))
+        self.gradient = gradient
         self._backward(gradient)
 
-    def _backward(self, gradient: 'Operation'):
+    def _backward(self, gradient: 'Operation') -> None:
         raise NotImplementedError('Backward operation not implemented')
 
     def __hash__(self):
@@ -66,22 +71,75 @@ class Operation(object):
 
 class OpConstant(Operation):
 
-    def __init__(self, x, **kwargs):
+    def __init__(self, x: Union[int, float, list, np.ndarray], **kwargs):
         if not np.isscalar(x) and not isinstance(x, np.ndarray):
             x = np.asarray(x)
         self.x = x
+        if np.isscalar(x):
+            self.shape = (1,)
+        else:
+            self.shape = x.shape
         super(OpConstant, self).__init__(**kwargs)
 
-    def _get_name(self):
+    def _get_name(self) -> str:
         if np.isscalar(self.x):
             return str(self.x)
         return 'C%s' % str(self.x.shape)
 
-    def _get_op_name(self):
+    def _get_op_name(self) -> str:
         return 'c_%d' % self._op_index
 
-    def _forward(self, feed_dict: dict):
+    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
         return self.x
 
-    def _backward(self, gradient: 'Operation'):
+    def _backward(self, gradient: 'Operation') -> None:
+        pass
+
+
+class OpPlaceholder(Operation):
+
+    def __init__(self, shape: tuple, **kwargs):
+        self.shape = shape
+        super(OpPlaceholder, self).__init__(**kwargs)
+
+    def _get_name(self) -> str:
+        return 'X%s' % str(self.shape)
+
+    def _get_op_name(self) -> str:
+        return 'x_%d' % self._op_index
+
+    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]):
+        return feed_dict[self]
+
+    def _backward(self, gradient: 'Operation') -> None:
+        pass
+
+
+class OpVariable(Operation):
+
+    def __init__(self, initializer: Union[Callable, int, float, list, np.ndarray], shape: tuple = None, **kwargs):
+        if callable(initializer):
+            self.x = initializer(shape)
+        else:
+            self.x = np.asarray(initializer)
+        self.shape = self.x.shape
+        super(OpVariable, self).__init__(**kwargs)
+
+    def update(self, value: Union[int, float, list, np.ndarray]) -> None:
+        value = np.array(value)
+        if self.x.shape != value.shape:
+            raise ValueError('The shape of two tensors should be equal, '
+                             'got %s and %s' % (str(self.x.shape), str(value.shape)))
+        self.x = value
+
+    def _get_name(self) -> str:
+        return 'W%s' % str(self.x.shape)
+
+    def _get_op_name(self) -> str:
+        return 'w_%d' % self._op_index
+
+    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
+        return self.x
+
+    def _backward(self, gradient: 'Operation') -> None:
         pass
