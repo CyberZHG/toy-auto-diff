@@ -22,13 +22,13 @@ class OpTranspose(Operation):
 
     def _get_name(self) -> str:
         if self.axes is None:
-            return 'transpose(%s)' % str(self.x)
-        return 'transpose(%s, axes=%s)' % (self.x._get_name(), str(self.axes))
+            return 'transpose(%s)' % self.x.name
+        return 'transpose(%s, axes=%s)' % (self.x.name, str(self.axes))
 
     def _get_op_name(self) -> str:
         if self.axes is None:
-            return 'transpose(%s)' % self.x._get_op_name()
-        return 'transpose(%s, axes=%s)' % (self.x._get_op_name(), str(self.axes))
+            return 'transpose(%s)' % self.x._op_name
+        return 'transpose(%s, axes=%s)' % (self.x._op_name, str(self.axes))
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Transpose the tensor."""
@@ -36,5 +36,5 @@ class OpTranspose(Operation):
 
     def _backward(self, gradient: Operation) -> None:
         """Transpose the gradients to its old shape."""
-        self.gradient = OpTranspose(gradient, axes=self.reverse_axes)
+        self.gradient = gradient.transpose(axes=self.reverse_axes)
         self.x.backward(self.gradient)

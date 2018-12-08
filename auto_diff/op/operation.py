@@ -72,20 +72,30 @@ class Operation(object):
         """Backward operation to be implemented."""
         raise NotImplementedError('Backward operation not implemented')
 
-    def transpose(self, axes: Optional[Sequence[int]] = None):
+    def transpose(self, axes: Optional[Sequence[int]] = None) -> 'Operation':
         """See :class:`OpTranspose`."""
         from .op_transpose import OpTranspose
         return OpTranspose(self, axes)
 
-    def reshape(self, shape: Sequence[int]):
+    def reshape(self, shape: Sequence[int]) -> 'Operation':
         """See :class:`OpReshape`."""
         from .op_reshape import OpReshape
         return OpReshape(self, shape)
 
-    def flatten(self):
+    def flatten(self) -> 'Operation':
         """See :class:`OpFlatten`."""
         from .op_flatten import OpFlatten
         return OpFlatten(self)
+
+    def expand_dims(self, axis: Optional[int] = None) -> 'Operation':
+        """See :class:`OpExpandDims`."""
+        from .op_expand_dims import OpExpandDims
+        return OpExpandDims(self, axis)
+
+    def squeeze(self, axis=None) -> 'Operation':
+        """See :class:`OpExpandDims`."""
+        from .op_squeeze import OpSqueeze
+        return OpSqueeze(self, axis)
 
     def __hash__(self):
         return hash(self._op_index)
