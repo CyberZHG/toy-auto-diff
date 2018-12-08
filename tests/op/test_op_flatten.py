@@ -1,6 +1,6 @@
 import numpy as np
 from auto_diff import OpVariable
-from tests.util import NumGradCheck
+from .util import NumGradCheck
 
 
 class TestOpFlatten(NumGradCheck):

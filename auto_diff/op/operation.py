@@ -1,7 +1,5 @@
-from typing import Union, Mapping, Callable, Optional, Sequence
+from typing import Union, Mapping, Optional, Sequence
 import numpy as np
-
-__all__ = ['Operation', 'OpConstant', 'OpPlaceholder', 'OpVariable', 'OpTranspose', 'OpReshape', 'OpFlatten']
 
 
 class Operation(object):
@@ -39,7 +37,7 @@ class Operation(object):
         """Get the name for indexing."""
         raise NotImplementedError('Get operation name not implemented')
 
-    def forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray] = None) -> np.ndarray:
+    def forward(self, feed_dict: Mapping[Union[str, 'Operation'], np.ndarray] = None) -> np.ndarray:
         """Do the calculations to get the output of the operations.
 
         :param feed_dict: Contains the real values of placeholders, see :class:`OpPlaceholder`.
@@ -55,7 +53,7 @@ class Operation(object):
             self._last_forward = output
         return output
 
-    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
+    def _forward(self, feed_dict: Mapping[Union[str, 'Operation'], np.ndarray]) -> np.ndarray:
         """Forward operation to be implemented."""
         raise NotImplementedError('Forward operation not implemented')
 
@@ -65,6 +63,7 @@ class Operation(object):
         :param gradient: Current gradient.
         """
         if gradient is None:
+            from .op_constant import OpConstant
             gradient = OpConstant(np.ones(self.shape), name='ones%s' % str(self.shape))
         self.gradient = gradient
         self._backward(gradient)
@@ -75,14 +74,17 @@ class Operation(object):
 
     def transpose(self, axes: Optional[Sequence[int]] = None):
         """See :class:`OpTranspose`."""
+        from .op_transpose import OpTranspose
         return OpTranspose(self, axes)
 
     def reshape(self, shape: Sequence[int]):
         """See :class:`OpReshape`."""
+        from .op_reshape import OpReshape
         return OpReshape(self, shape)
 
     def flatten(self):
         """See :class:`OpFlatten`."""
+        from .op_flatten import OpFlatten
         return OpFlatten(self)
 
     def __hash__(self):
@@ -96,158 +98,3 @@ class Operation(object):
 
     def __unicode__(self):
         return self.__str__()
-
-
-class OpConstant(Operation):
-
-    def __init__(self, x: Union[int, float, list, np.ndarray], **kwargs):
-        if isinstance(x, int):
-            x = float(x)
-        if not np.isscalar(x) and not isinstance(x, np.ndarray):
-            x = np.array(x, dtype=np.float64)
-        self.x = x
-        if np.isscalar(x):
-            self.shape = (1,)
-        else:
-            self.shape = x.shape
-        super(OpConstant, self).__init__(**kwargs)
-
-    def _get_name(self) -> str:
-        if np.isscalar(self.x):
-            return str(self.x)
-        return 'C%s' % str(self.x.shape)
-
-    def _get_op_name(self) -> str:
-        return 'c_%d' % self._op_index
-
-    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
-        return self.x
-
-    def _backward(self, gradient: 'Operation') -> None:
-        pass
-
-
-class OpPlaceholder(Operation):
-
-    def __init__(self, shape: tuple, **kwargs):
-        self.shape = shape
-        super(OpPlaceholder, self).__init__(**kwargs)
-
-    def _get_name(self) -> str:
-        return 'X%s' % str(self.shape)
-
-    def _get_op_name(self) -> str:
-        return 'x_%d' % self._op_index
-
-    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]):
-        return feed_dict[self]
-
-    def _backward(self, gradient: 'Operation') -> None:
-        pass
-
-
-class OpVariable(Operation):
-
-    def __init__(self, initializer: Union[Callable, int, float, list, np.ndarray], shape: tuple = None, **kwargs):
-        if callable(initializer):
-            self.x = initializer(shape)
-        else:
-            self.x = np.array(initializer, dtype=np.float64)
-        self.shape = self.x.shape
-        super(OpVariable, self).__init__(**kwargs)
-
-    def update(self, value: Union[int, float, list, np.ndarray]) -> None:
-        value = np.array(value)
-        if self.x.shape != value.shape:
-            raise ValueError('The shape of two tensors should be equal, '
-                             'got %s and %s' % (str(self.x.shape), str(value.shape)))
-        self.x = value
-
-    def _get_name(self) -> str:
-        return 'W%s' % str(self.x.shape)
-
-    def _get_op_name(self) -> str:
-        return 'w_%d' % self._op_index
-
-    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
-        return self.x
-
-    def _backward(self, gradient: 'Operation') -> None:
-        pass
-
-
-class OpTranspose(Operation):
-
-    def __init__(self, x: Operation, axes: Optional[Sequence[int]] = None, **kwargs):
-        self.x = x
-        self.axes = axes
-        if axes is None:
-            self.reverse_axes = None
-            self.shape = tuple(reversed(x.shape))
-        else:
-            self.reverse_axes = [0] * len(axes)
-            for i, axis in enumerate(axes):
-                self.reverse_axes[axis] = i
-            self.shape = tuple(x.shape[axis] for axis in axes)
-        super(OpTranspose, self).__init__(**kwargs)
-
-    def _get_name(self) -> str:
-        if self.axes is None:
-            return 'transpose(%s)' % str(self.x)
-        return 'transpose(%s, axes=%s)' % (self.x._get_name(), str(self.axes))
-
-    def _get_op_name(self) -> str:
-        if self.axes is None:
-            return 'transpose(%s)' % self.x._get_op_name()
-        return 'transpose(%s, axes=%s)' % (self.x._get_op_name(), str(self.axes))
-
-    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
-        return np.transpose(self.x.forward(feed_dict), axes=self.axes)
-
-    def _backward(self, gradient: 'Operation') -> None:
-        self.gradient = OpTranspose(gradient, axes=self.reverse_axes)
-        self.x.backward(self.gradient)
-
-
-class OpReshape(Operation):
-
-    def __init__(self, x: Operation, shape: Sequence[int], **kwargs):
-        self.x = x
-        self.shape = shape
-        self.old_shape = x.shape
-        super(OpReshape, self).__init__(**kwargs)
-
-    def _get_name(self) -> str:
-        return 'reshape(%s, shape=%s)' % (self.x._get_name(), str(self.shape))
-
-    def _get_op_name(self) -> str:
-        return 'reshape(%s, shape=%s)' % (self.x._get_op_name(), str(self.shape))
-
-    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
-        return np.reshape(self.x.forward(feed_dict), newshape=self.shape)
-
-    def _backward(self, gradient: 'Operation') -> None:
-        self.gradient = OpReshape(gradient, shape=self.old_shape)
-        self.x.backward(self.gradient)
-
-
-class OpFlatten(Operation):
-
-    def __init__(self, x: Operation, **kwargs):
-        self.x = x
-        self.shape = (np.prod(x.shape),)
-        self.old_shape = x.shape
-        super(OpFlatten, self).__init__(**kwargs)
-
-    def _get_name(self) -> str:
-        return 'flatten(%s)' % self.x._get_name()
-
-    def _get_op_name(self) -> str:
-        return 'flatten(%s)' % self.x._get_op_name()
-
-    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
-        return self.x.forward(feed_dict).flatten()
-
-    def _backward(self, gradient: 'Operation') -> None:
-        self.gradient = OpReshape(gradient, shape=self.old_shape)
-        self.x.backward(self.gradient)

@@ -1,6 +1,6 @@
 import numpy as np
-from auto_diff import OpVariable, OpReshape
-from tests.util import NumGradCheck
+from auto_diff import OpVariable
+from .util import NumGradCheck
 
 
 class TestOpReshape(NumGradCheck):

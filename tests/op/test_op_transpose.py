@@ -1,6 +1,6 @@
 import numpy as np
-from auto_diff import OpVariable, OpTranspose
-from tests.util import NumGradCheck
+from auto_diff import OpVariable
+from .util import NumGradCheck
 
 
 class TestOpTranspose(NumGradCheck):

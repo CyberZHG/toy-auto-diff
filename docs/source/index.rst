@@ -7,8 +7,6 @@ Toy Automatic Differentiation
 
    Operations <auto_diff.op>
 
-   Modules <modules>
-   Tests <tests>
 
 Indices and Tables
 ==================
