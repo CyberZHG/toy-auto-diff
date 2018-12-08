@@ -1,6 +1,6 @@
 import numpy as np
 from auto_diff import Session, OpVariable
-from .util import NumGradCheck
+from tests.util import NumGradCheck
 
 
 class TestOpVariable(NumGradCheck):

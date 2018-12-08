@@ -1,5 +1,5 @@
 from typing import Union, Mapping, List
-from .operation import Operation
+from auto_diff.op.operation import Operation
 
 __all__ = ['Session']
 

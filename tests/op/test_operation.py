@@ -33,3 +33,6 @@ class TestOperation(TestCase):
         op = OpConstant(np.array(1.0))
         sess.run(op)
         sess.run(op)
+
+    def test_equal(self):
+        self.assertNotEqual(DummaryOperation(), DummaryOperation())

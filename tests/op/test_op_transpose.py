@@ -1,6 +1,6 @@
 import numpy as np
 from auto_diff import OpVariable, OpTranspose
-from .util import NumGradCheck
+from tests.util import NumGradCheck
 
 
 class TestOpTranspose(NumGradCheck):
@@ -39,7 +39,7 @@ class TestOpTranspose(NumGradCheck):
         val = np.array([[1, 2, 3], [4, 5, 6]])
         w = OpVariable(val)
         wt = OpTranspose(w)
-        self.assertEqual('(W(2, 3))^T', wt.__unicode__())
+        self.assertEqual('transpose(W(2, 3))', wt.__unicode__())
         val = np.arange(6).reshape((1, 2, 3))
         w = OpVariable(val)
         wt = OpTranspose(w, axes=(1, 0, 2))

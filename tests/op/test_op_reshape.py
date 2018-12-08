@@ -1,6 +1,6 @@
 import numpy as np
 from auto_diff import OpVariable, OpReshape
-from .util import NumGradCheck
+from tests.util import NumGradCheck
 
 
 class TestOpReshape(NumGradCheck):
@@ -10,7 +10,7 @@ class TestOpReshape(NumGradCheck):
         w = OpVariable(val)
         wr = OpReshape(w, shape=(1, 2, 3))
         actual = wr.forward()
-        expect = np.array([[[0., 1, 2], [3, 4, 5]]])
+        expect = np.array([[[0, 1, 2], [3, 4, 5]]])
         self.assertEqual((1, 2, 3), wr.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
 
