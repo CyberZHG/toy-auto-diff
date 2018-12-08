@@ -5,10 +5,14 @@ __all__ = ['Operation', 'OpConstant', 'OpPlaceholder', 'OpVariable', 'OpTranspos
 
 
 class Operation(object):
+    """Abstract operation for building computing graph."""
 
+    #: The counter for giving each operation a unique index.
     __op_counter = [0]
+    #: Collection of existing operations.
     __op_collection = {}
 
+    #: The key for extracting step information from session.
     STEP_KEY = '__step__'
 
     def __init__(self, **kwargs):
@@ -28,12 +32,19 @@ class Operation(object):
         self._last_forward = None
 
     def _get_name(self) -> str:
+        """Get the name for display."""
         raise NotImplementedError('Get name not implemented')
 
     def _get_op_name(self) -> str:
+        """Get the name for indexing."""
         raise NotImplementedError('Get operation name not implemented')
 
     def forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray] = None) -> np.ndarray:
+        """Do the calculations to get the output of the operations.
+
+        :param feed_dict: Contains the real values of placeholders, see :class:`OpPlaceholder`.
+        :return: A numpy array.
+        """
         if feed_dict is None:
             feed_dict = {}
         if self.STEP_KEY in feed_dict and feed_dict[self.STEP_KEY] == self._last_step:
@@ -45,24 +56,33 @@ class Operation(object):
         return output
 
     def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
+        """Forward operation to be implemented."""
         raise NotImplementedError('Forward operation not implemented')
 
-    def backward(self, gradient: 'Operation' = None) -> str:
+    def backward(self, gradient: 'Operation' = None) -> None:
+        """Update gradients recursively.
+
+        :param gradient: Current gradient.
+        """
         if gradient is None:
             gradient = OpConstant(np.ones(self.shape), name='ones%s' % str(self.shape))
         self.gradient = gradient
         self._backward(gradient)
 
     def _backward(self, gradient: 'Operation') -> None:
+        """Backward operation to be implemented."""
         raise NotImplementedError('Backward operation not implemented')
 
     def transpose(self, axes: Optional[Sequence[int]] = None):
+        """See :class:`OpTranspose`."""
         return OpTranspose(self, axes)
 
     def reshape(self, shape: Sequence[int]):
+        """See :class:`OpReshape`."""
         return OpReshape(self, shape)
 
     def flatten(self):
+        """See :class:`OpFlatten`."""
         return OpFlatten(self)
 
     def __hash__(self):
