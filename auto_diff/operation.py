@@ -1,7 +1,7 @@
 from typing import Union, Mapping, Callable, Optional, Sequence
 import numpy as np
 
-__all__ = ['Operation', 'OpConstant', 'OpPlaceholder', 'OpVariable', 'OpTranspose']
+__all__ = ['Operation', 'OpConstant', 'OpPlaceholder', 'OpVariable', 'OpTranspose', 'OpReshape']
 
 
 class Operation(object):
@@ -177,4 +177,26 @@ class OpTranspose(Operation):
 
     def _backward(self, gradient: 'Operation') -> None:
         self.gradient = OpTranspose(gradient, axes=self.reverse_axes)
+        self.x.backward(self.gradient)
+
+
+class OpReshape(Operation):
+
+    def __init__(self, x: Operation, shape: Sequence[int], **kwargs):
+        self.x = x
+        self.shape = shape
+        self.old_shape = x.shape
+        super(OpReshape, self).__init__(**kwargs)
+
+    def _get_name(self) -> str:
+        return 'reshape(%s, shape=%s)' % (self.x._get_name(), str(self.shape))
+
+    def _get_op_name(self) -> str:
+        return 'reshape(%s, shape=%s)' % (self.x._get_op_name(), str(self.shape))
+
+    def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]) -> np.ndarray:
+        return np.reshape(self.x.forward(feed_dict), newshape=self.shape)
+
+    def _backward(self, gradient: 'Operation') -> None:
+        self.gradient = OpReshape(gradient, shape=self.old_shape)
         self.x.backward(self.gradient)

@@ -3,7 +3,7 @@ from auto_diff import OpVariable, OpTranspose
 from .util import NumGradCheck
 
 
-class TestOpVariable(NumGradCheck):
+class TestOpTranspose(NumGradCheck):
 
     def test_forward_default(self):
         val = np.array([[1, 2, 3], [4, 5, 6]])
