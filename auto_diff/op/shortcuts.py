@@ -7,7 +7,7 @@ __all__ = [
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze',
     'sum',
-    'add', 'multiply', 'negative',
+    'add', 'subtract', 'multiply', 'negative',
 ]
 
 
@@ -96,6 +96,12 @@ def add(x: Operation, y: Operation, **kwargs) -> Operation:
     """See :class:`OpAdd`."""
     from .op_add import OpAdd
     return OpAdd(x, y, **kwargs)
+
+
+def subtract(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpSubtract`."""
+    from .op_subtract import OpSubtract
+    return OpSubtract(x, y, **kwargs)
 
 
 def multiply(x: Operation, y: Operation, **kwargs) -> Operation:

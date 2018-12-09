@@ -136,6 +136,11 @@ class Operation(object):
         from .op_add import OpAdd
         return OpAdd(self, other)
 
+    def __sub__(self, other) -> 'Operation':
+        """See :class:`OpSubtract`."""
+        from .op_subtract import OpSubtract
+        return OpSubtract(self, other)
+
     def __mul__(self, other) -> 'Operation':
         """See :class:`OpMultiply`."""
         from .op_multiply import OpMultiply
