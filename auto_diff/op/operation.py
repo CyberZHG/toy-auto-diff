@@ -134,17 +134,50 @@ class Operation(object):
     def __add__(self, other) -> 'Operation':
         """See :class:`OpAdd`."""
         from .op_add import OpAdd
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
         return OpAdd(self, other)
+
+    def __radd__(self, other) -> 'Operation':
+        """See :class:`OpAdd`."""
+        from .op_add import OpAdd
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
+        return OpAdd(other, self)
 
     def __sub__(self, other) -> 'Operation':
         """See :class:`OpSubtract`."""
         from .op_subtract import OpSubtract
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
         return OpSubtract(self, other)
+
+    def __rsub__(self, other) -> 'Operation':
+        """See :class:`OpSubtract`."""
+        from .op_subtract import OpSubtract
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
+        return OpSubtract(other, self)
 
     def __mul__(self, other) -> 'Operation':
         """See :class:`OpMultiply`."""
         from .op_multiply import OpMultiply
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
         return OpMultiply(self, other)
+
+    def __rmul__(self, other):
+        """See :class:`OpMultiply`."""
+        from .op_multiply import OpMultiply
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
+        return OpMultiply(other, self)
 
     def __neg__(self) -> 'Operation':
         """See :class:`OpNegative`."""

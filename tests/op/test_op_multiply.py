@@ -62,3 +62,7 @@ class TestOpMultiply(NumGradCheck):
         y = ad.placeholder(shape=(1, 1), name='Y')
         z = ad.multiply(x, y)
         self.assertEqual('X * Y', z.__unicode__())
+        z = x * 1.0
+        self.assertEqual('X * 1.0', z.__unicode__())
+        z = 1.0 * y
+        self.assertEqual('1.0 * Y', z.__unicode__())
