@@ -3,7 +3,7 @@ import auto_diff as ad
 from .util import NumGradCheck
 
 
-class TestOpMultiply(NumGradCheck):
+class TestOpAdd(NumGradCheck):
 
     @staticmethod
     def _gen_random_and_result(x_shape, y_shape):
@@ -57,8 +57,8 @@ class TestOpMultiply(NumGradCheck):
 
     def test_name(self):
         z, _, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
-        self.assertEqual('add(X(1, 3, 1, 4), Y(5, 1))', z.__unicode__())
+        self.assertEqual('(X(1, 3, 1, 4) + Y(5, 1))', z.__unicode__())
         x = ad.placeholder(shape=(3, 4), name='X')
         y = ad.placeholder(shape=(1, 1), name='Y')
         z = ad.add(x, y)
-        self.assertEqual('add(X, Y)', z.__unicode__())
+        self.assertEqual('(X + Y)', z.__unicode__())

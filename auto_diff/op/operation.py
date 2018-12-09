@@ -141,6 +141,11 @@ class Operation(object):
         from .op_multiply import OpMultiply
         return OpMultiply(self, other)
 
+    def __neg__(self) -> 'Operation':
+        """See :class:`OpNegative`."""
+        from .op_negative import OpNegative
+        return OpNegative(self)
+
     def simplify(self) -> 'Operation':
         from ..simple import simplify
         return simplify(self)
