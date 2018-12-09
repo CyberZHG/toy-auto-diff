@@ -6,6 +6,7 @@ Operations
 
    special
    move
+   element
    unary
    binary
 
@@ -21,7 +22,7 @@ Operations
    z = np.dot(x, y)
 
 
-However, the result of operations is another operation, no real calulation is performed in this stage. You need to call ``forward`` explicitly to get the final result:
+However, the result of operations is another operation, no real calculation is performed in this stage. You need to call ``forward`` explicitly to get the final result:
 
 .. code-block:: python
 

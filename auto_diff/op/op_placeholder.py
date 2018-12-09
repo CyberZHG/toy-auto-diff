@@ -1,4 +1,4 @@
-from typing import Mapping, Union
+from typing import Mapping, Union, Sequence
 import numpy as np
 from .operation import Operation
 
@@ -6,12 +6,12 @@ from .operation import Operation
 class OpPlaceholder(Operation):
     """The placeholder that represents values to be feed."""
 
-    def __init__(self, shape: tuple, **kwargs):
+    def __init__(self, shape: Sequence[int], **kwargs):
         """
         :param shape: Shape of the value.
         :param kwargs:
         """
-        self.shape = shape
+        self.shape = tuple(shape)
         super(OpPlaceholder, self).__init__(**kwargs)
 
     def _get_name(self) -> str:

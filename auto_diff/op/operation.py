@@ -20,7 +20,7 @@ class Operation(object):
             else:
                 self.name: str = self._get_name()
         if not hasattr(self, 'shape'):
-            self.shape: tuple = None
+            self.shape: Sequence = None
             raise NotImplementedError('Shape not defined')
         if not hasattr(self, 'inputs'):
             self.inputs: Sequence['Operation'] = []
@@ -75,30 +75,66 @@ class Operation(object):
         """Backward operation to be implemented."""
         raise NotImplementedError('Backward operation not implemented')
 
-    def transpose(self, axes: Optional[Sequence[int]] = None) -> 'Operation':
+    def _broadcast_shape(self, x: 'Operation', y: 'Operation'):
+        min_dim = min(len(x.shape), len(y.shape))
+        shape = []
+        for i in range(1, min_dim + 1):
+            if x.shape[-i] != 1 and y.shape[-i] != 1 and x.shape[-i] != y.shape[-i]:
+                raise ValueError('Cannot broadcast with shape %s and %s' % (str(x.shape), str(y.shape)))
+            shape.append(max(x.shape[-i], y.shape[-i]))
+        self.shape = tuple(list(x.shape[:-min_dim]) + list(y.shape[:-min_dim]) + list(reversed(shape)))
+
+    def _broadcast_backward(self, gradient: 'Operation'):
+        if self.shape == gradient.shape:
+            return gradient
+        expand_dim = len(gradient.shape) - len(self.shape)
+        axis = list(range(expand_dim))
+        for i, dim in enumerate(self.shape):
+            if self.shape[i] == 1 and gradient.shape[i + expand_dim] > 1:
+                axis.append(expand_dim + i)
+        if len(axis) == 1:
+            axis = axis[0]
+        else:
+            axis = tuple(axis)
+        gradient = gradient.sum(axis=axis, keepdims=True)
+        if expand_dim:
+            gradient = gradient.squeeze(axis=tuple(list(range(expand_dim))))
+        return gradient
+
+    def transpose(self, axes: Optional[Sequence[int]] = None, **kwargs) -> 'Operation':
         """See :class:`OpTranspose`."""
         from .op_transpose import OpTranspose
-        return OpTranspose(self, axes)
+        return OpTranspose(self, axes, **kwargs)
 
-    def reshape(self, shape: Sequence[int]) -> 'Operation':
+    def reshape(self, shape: Sequence[int], **kwargs) -> 'Operation':
         """See :class:`OpReshape`."""
         from .op_reshape import OpReshape
-        return OpReshape(self, shape)
+        return OpReshape(self, shape, **kwargs)
 
-    def flatten(self) -> 'Operation':
+    def flatten(self, **kwargs) -> 'Operation':
         """See :class:`OpFlatten`."""
         from .op_flatten import OpFlatten
-        return OpFlatten(self)
+        return OpFlatten(self, **kwargs)
 
-    def expand_dims(self, axis: Optional[int] = None) -> 'Operation':
+    def expand_dims(self, axis: Optional[int] = None, **kwargs) -> 'Operation':
         """See :class:`OpExpandDims`."""
         from .op_expand_dims import OpExpandDims
-        return OpExpandDims(self, axis)
+        return OpExpandDims(self, axis, **kwargs)
 
-    def squeeze(self, axis=None) -> 'Operation':
+    def squeeze(self, axis=None, **kwargs) -> 'Operation':
         """See :class:`OpSqueeze`."""
         from .op_squeeze import OpSqueeze
-        return OpSqueeze(self, axis)
+        return OpSqueeze(self, axis, **kwargs)
+
+    def sum(self, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> 'Operation':
+        """See :class:`OpSum`."""
+        from .op_sum import OpSum
+        return OpSum(self, axis, keepdims, **kwargs)
+
+    def __mul__(self, other) -> 'Operation':
+        """See :class:`OpMultiply`."""
+        from .op_multiply import OpMultiply
+        return OpMultiply(self, other)
 
     def simplify(self) -> 'Operation':
         from ..simple import simplify

@@ -1,5 +1,6 @@
 import numpy as np
-from .op_reshape import Operation, OpReshape
+from .operation import Operation
+from .op_reshape import OpReshape
 
 
 class OpFlatten(OpReshape):
