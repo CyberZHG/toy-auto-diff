@@ -7,6 +7,7 @@ __all__ = [
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze',
     'sum',
+    'add', 'multiply',
 ]
 
 
@@ -89,3 +90,15 @@ def sum(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims
     """See :class:`OpSum`."""
     from .op_sum import OpSum
     return OpSum(x, axis, keepdims, **kwargs)
+
+
+def add(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpAdd`."""
+    from .op_add import OpAdd
+    return OpAdd(x, y, **kwargs)
+
+
+def multiply(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpMultiply`."""
+    from .op_multiply import OpMultiply
+    return OpMultiply(x, y, **kwargs)

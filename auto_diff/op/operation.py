@@ -131,6 +131,11 @@ class Operation(object):
         from .op_sum import OpSum
         return OpSum(self, axis, keepdims, **kwargs)
 
+    def __add__(self, other) -> 'Operation':
+        """See :class:`OpAdd`."""
+        from .op_add import OpAdd
+        return OpAdd(self, other)
+
     def __mul__(self, other) -> 'Operation':
         """See :class:`OpMultiply`."""
         from .op_multiply import OpMultiply

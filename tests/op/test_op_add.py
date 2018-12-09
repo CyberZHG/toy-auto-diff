@@ -11,8 +11,8 @@ class TestOpMultiply(NumGradCheck):
         y_val = np.random.random(y_shape)
         x = ad.variable(x_val, name='X%s' % str(x_shape))
         y = ad.variable(y_val, name='Y%s' % str(y_shape))
-        z = x * y
-        expect = x_val * y_val
+        z = x + y
+        expect = x_val + y_val
         return z, [x, y], expect
 
     def test_forward(self):
@@ -57,8 +57,8 @@ class TestOpMultiply(NumGradCheck):
 
     def test_name(self):
         z, _, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
-        self.assertEqual('multiply(X(1, 3, 1, 4), Y(5, 1))', z.__unicode__())
+        self.assertEqual('add(X(1, 3, 1, 4), Y(5, 1))', z.__unicode__())
         x = ad.placeholder(shape=(3, 4), name='X')
         y = ad.placeholder(shape=(1, 1), name='Y')
-        z = ad.multiply(x, y)
-        self.assertEqual('multiply(X, Y)', z.__unicode__())
+        z = ad.add(x, y)
+        self.assertEqual('add(X, Y)', z.__unicode__())
