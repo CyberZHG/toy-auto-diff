@@ -7,7 +7,7 @@ from .op_placeholder import OpPlaceholder
 class OpSqueeze(Operation):
     """Flatten the tensor to 1-D array."""
 
-    def __init__(self, x: Operation, axis: Optional[Union[int, Sequence[int]]], **kwargs):
+    def __init__(self, x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, **kwargs):
         self.inputs = [x]
         if axis is None:
             axis = -1

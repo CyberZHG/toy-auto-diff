@@ -1,9 +1,9 @@
 import numpy as np
-from auto_diff import Session, Operation, OpConstant
+import auto_diff as ad
 from unittest import TestCase
 
 
-class DummaryOperation(Operation):
+class DummaryOperation(ad.Operation):
 
     def __init__(self, shape=None, **kwargs):
         if shape is not None:
@@ -21,13 +21,13 @@ class TestOperation(TestCase):
 
     def test_no_shape(self):
         with self.assertRaises(NotImplementedError):
-            Operation()
+            ad.Operation()
 
     def test_name_not_implemented(self):
         with self.assertRaises(NotImplementedError):
-            Operation(shape=(1, 2))
+            ad.Operation(shape=(1, 2))
         with self.assertRaises(NotImplementedError):
-            Operation(shape=(1, 2), name='test')
+            ad.Operation(shape=(1, 2), name='test')
 
     def test_forward_not_implemented(self):
         with self.assertRaises(NotImplementedError):
@@ -38,8 +38,8 @@ class TestOperation(TestCase):
             DummaryOperation(shape=(1, 2)).backward()
 
     def test_twice(self):
-        sess = Session()
-        op = OpConstant(np.array(1.0))
+        sess = ad.Session()
+        op = ad.constant(np.array(1.0))
         sess.run(op)
         sess.run(op)
 
