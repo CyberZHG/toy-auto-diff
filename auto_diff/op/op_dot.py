@@ -12,13 +12,13 @@ class OpDot(Operation):
     **If** both `x` and `y` are 1-D arrays, it is the inner product of vectors, the result is a scalar:
 
     .. math::
-       z = \sum_k x_{k} \cdot y_{k}
+       z = \\sum_k x_{k} \\cdot y_{k}
 
     Partial derivatives of a single element:
 
     .. math::
        \\frac{\\partial L}{\\partial x_{i}} =
-       \\frac{\partial L}{\\partial z} \\cdot \\frac{\\partial z}{\\partial x_i} =
+       \\frac{\\partial L}{\\partial z} \\cdot \\frac{\\partial z}{\\partial x_i} =
        \\frac{\\partial L}{\\partial z} \\cdot y_i
 
     .. math::
@@ -39,7 +39,7 @@ class OpDot(Operation):
     **If** both `x` and `y` are 2-D arrays, it is the matrix multiplication, the result is a 2-D array:
 
     .. math::
-       z_{ij} = \sum_{k} x_{ik} \cdot y_{kj}
+       z_{ij} = \\sum_{k} x_{ik} \\cdot y_{kj}
 
     Partial derivative of a single element:
 
@@ -70,11 +70,11 @@ class OpDot(Operation):
     .. math::
        \\frac{\\partial L}{\\partial Y} = X^T \\cdot \\frac{\\partial L}{\\partial Z}
 
+    **If** `x` is an N-D tensor and `y` is a 1-D array, it is a sum product over the last axis of `x` and `y`.
+
     **If** `x` is an N-D tensor and `y` is an M-D tensor (M >= 2), it is a sum product over the last axis of `x` and
     second-to-last axis of `y`.
 
-    **If** `x` is an N-D tensor and `y` is a 1-D array, it is a sum product over the last axis of `x` and `y`.
-    It is a special case of the previous condition if `y` is considered as a K x 1 matrix and result is squeezed.
     """
 
     def __init__(self, x: Operation, y: Operation, **kwargs):

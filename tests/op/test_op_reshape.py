@@ -12,6 +12,16 @@ class TestOpReshape(NumGradCheck):
         expect = np.array([[[0, 1, 2], [3, 4, 5]]])
         self.assertEqual((1, 2, 3), wr.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
+        wr = ad.variable(val).reshape(shape=(-1,))
+        actual = wr.forward()
+        expect = np.array([0, 1, 2, 3, 4, 5])
+        self.assertEqual((6,), wr.shape)
+        self.assertTrue(np.allclose(expect, actual), (expect, actual))
+
+    def test_forward_undefined(self):
+        val = ad.variable(np.arange(6))
+        with self.assertRaises(ValueError):
+            val.reshape(shape=(-1, 2, -1))
 
     def test_backward(self):
         val = np.arange(6)
