@@ -3,17 +3,28 @@ import auto_diff as ad
 from unittest import TestCase
 
 
-class DummaryOperation(ad.Operation):
+class DummyOpWithNames(ad.Operation):
 
     def __init__(self, shape=None, **kwargs):
         if shape is not None:
             self.shape = shape
-        super(DummaryOperation, self).__init__(**kwargs)
+        super(DummyOpWithNames, self).__init__(**kwargs)
 
     def _get_name(self):
         return 'test'
 
     def _get_op_name(self):
+        return 'test'
+
+
+class DummyOpWithoutOpName(ad.Operation):
+
+    def __init__(self, shape=None, **kwargs):
+        if shape is not None:
+            self.shape = shape
+        super(DummyOpWithoutOpName, self).__init__(**kwargs)
+
+    def _get_name(self):
         return 'test'
 
 
@@ -28,14 +39,16 @@ class TestOperation(TestCase):
             ad.Operation(shape=(1, 2))
         with self.assertRaises(NotImplementedError):
             ad.Operation(shape=(1, 2), name='test')
+        with self.assertRaises(NotImplementedError):
+            DummyOpWithoutOpName(shape=(1, 2))
 
     def test_forward_not_implemented(self):
         with self.assertRaises(NotImplementedError):
-            DummaryOperation(shape=(1, 2)).forward()
+            DummyOpWithNames(shape=(1, 2)).forward()
 
     def test_backward_not_implemented(self):
         with self.assertRaises(NotImplementedError):
-            DummaryOperation(shape=(1, 2)).backward()
+            DummyOpWithNames(shape=(1, 2)).backward()
 
     def test_twice(self):
         sess = ad.Session()
@@ -44,4 +57,4 @@ class TestOperation(TestCase):
         sess.run(op)
 
     def test_equal(self):
-        self.assertNotEqual(DummaryOperation(shape=(1, 2)), DummaryOperation(shape=(1, 2)))
+        self.assertNotEqual(DummyOpWithNames(shape=(1, 2)), DummyOpWithNames(shape=(1, 2)))

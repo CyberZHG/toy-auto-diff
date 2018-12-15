@@ -66,3 +66,7 @@ class TestOpAdd(NumGradCheck):
         self.assertEqual('(X + 1.0)', z.__unicode__())
         z = 1.0 + y
         self.assertEqual('(1.0 + Y)', z.__unicode__())
+
+    def test_broadcast_failed(self):
+        with self.assertRaises(ValueError):
+            self._gen_random_and_result((1, 3, 4), (1, 4, 1))
