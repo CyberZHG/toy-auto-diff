@@ -1,0 +1,18 @@
+auto\_diff package
+==================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    auto_diff.op
+    auto_diff.sess
+
+Module contents
+---------------
+
+.. automodule:: auto_diff
+    :members:
+    :undoc-members:
+    :show-inheritance:

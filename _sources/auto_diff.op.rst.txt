@@ -1,0 +1,70 @@
+auto\_diff.op package
+=====================
+
+Submodules
+----------
+
+auto\_diff.op.op\_constant module
+---------------------------------
+
+.. automodule:: auto_diff.op.op_constant
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+auto\_diff.op.op\_flatten module
+--------------------------------
+
+.. automodule:: auto_diff.op.op_flatten
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+auto\_diff.op.op\_placeholder module
+------------------------------------
+
+.. automodule:: auto_diff.op.op_placeholder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+auto\_diff.op.op\_reshape module
+--------------------------------
+
+.. automodule:: auto_diff.op.op_reshape
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+auto\_diff.op.op\_transpose module
+----------------------------------
+
+.. automodule:: auto_diff.op.op_transpose
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+auto\_diff.op.op\_variable module
+---------------------------------
+
+.. automodule:: auto_diff.op.op_variable
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+auto\_diff.op.operation module
+------------------------------
+
+.. automodule:: auto_diff.op.operation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: auto_diff.op
+    :members:
+    :undoc-members:
+    :show-inheritance:

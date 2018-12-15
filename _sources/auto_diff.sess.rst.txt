@@ -1,0 +1,22 @@
+auto\_diff.sess package
+=======================
+
+Submodules
+----------
+
+auto\_diff.sess.session module
+------------------------------
+
+.. automodule:: auto_diff.sess.session
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: auto_diff.sess
+    :members:
+    :undoc-members:
+    :show-inheritance:

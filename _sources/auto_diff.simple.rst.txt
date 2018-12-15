@@ -1,0 +1,30 @@
+auto\_diff.simple package
+=========================
+
+Submodules
+----------
+
+auto\_diff.simple.simplify module
+---------------------------------
+
+.. automodule:: auto_diff.simple.simplify
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+auto\_diff.simple.sp\_const\_sub\_tree module
+---------------------------------------------
+
+.. automodule:: auto_diff.simple.sp_const_sub_tree
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: auto_diff.simple
+    :members:
+    :undoc-members:
+    :show-inheritance:
