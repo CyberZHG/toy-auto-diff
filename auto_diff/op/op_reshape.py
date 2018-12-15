@@ -9,7 +9,18 @@ class OpReshape(Operation):
 
     def __init__(self, x: Operation, shape: Sequence[int], **kwargs):
         self.inputs = [x]
-        self.shape = shape
+        rest, fill_index = 1, -1
+        for index, dim in enumerate(shape):
+            if dim == -1:
+                if fill_index != -1:
+                    raise ValueError('Only one dimension could be undefined, found %s' % str(shape))
+                fill_index = index
+            else:
+                rest *= dim
+        if fill_index != -1:
+            shape = list(shape)
+            shape[fill_index] = np.prod(x.shape, dtype=np.int) // rest
+        self.shape = tuple(shape)
         self.old_shape = x.shape
         super(OpReshape, self).__init__(**kwargs)
 
