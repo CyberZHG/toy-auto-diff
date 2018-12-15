@@ -84,7 +84,10 @@
 <li class="toctree-l2"><a class="reference internal" href="move.html">Movement Operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="element.html">Element-wise Operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="unary.html">Unary Operations</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Binary Operations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Binary Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dot">dot</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -155,6 +158,72 @@
             
   <div class="section" id="binary-operations">
 <h1>Binary Operations<a class="headerlink" href="#binary-operations" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dot">
+<h2>dot<a class="headerlink" href="#dot" title="Permalink to this headline">¶</a></h2>
+<p>The inverse operation of <cite>dot</cite> is <cite>dot</cite>.</p>
+<dl class="class">
+<dt id="auto_diff.OpDot">
+<em class="property">class </em><code class="descclassname">auto_diff.</code><code class="descname">OpDot</code><span class="sig-paren">(</span><em>x: auto_diff.op.operation.Operation</em>, <em>y: auto_diff.op.operation.Operation</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/auto_diff/op/op_dot.html#OpDot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.OpDot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../auto_diff.op.html#auto_diff.op.operation.Operation" title="auto_diff.op.operation.Operation"><code class="xref py py-class docutils literal notranslate"><span class="pre">auto_diff.op.operation.Operation</span></code></a></p>
+<p>Dot product of two tensors.</p>
+<p><strong>If</strong> either <cite>x</cite> or <cite>y</cite> is a scalar, then it is equivalent to <code class="xref py py-class docutils literal notranslate"><span class="pre">OpMultiply</span></code>.</p>
+<p><strong>If</strong> both <cite>x</cite> and <cite>y</cite> are 1-D arrays, it is the inner product of vectors, the result is a scalar:</p>
+<div class="math notranslate nohighlight">
+\[z = \sum_k x_{k} \cdot y_{k}\]</div>
+<p>Partial derivatives of a single element:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial L}{\partial x_{i}} =
+\frac{\partial L}{\partial z} \cdot \frac{\partial z}{\partial x_i} =
+\frac{\partial L}{\partial z} \cdot y_i\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{\partial L}{\partial y_{i}} =
+\frac{\partial L}{\partial z} \cdot \frac{\partial z}{\partial y_i} =
+\frac{\partial L}{\partial z} \cdot x_i\]</div>
+<p>Vector derivatives:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial L}{\partial x} = \frac{\partial L}{\partial z} \cdot y\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{\partial L}{\partial y} = \frac{\partial L}{\partial z} \cdot x\]</div>
+<p>Note that since <cite>z</cite> is a scalar, the calculation of vector derivatives in this case is the dot operation.</p>
+<p><strong>If</strong> both <cite>x</cite> and <cite>y</cite> are 2-D arrays, it is the matrix multiplication, the result is a 2-D array:</p>
+<div class="math notranslate nohighlight">
+\[z_{ij} = \sum_{k} x_{ik} \cdot y_{kj}\]</div>
+<p>Partial derivative of a single element:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{rcl}
+\displaystyle \frac{\partial L}{\partial x_{ij}}
+&amp;=&amp; \displaystyle \sum_{a,b} \frac{\partial L}{\partial z_{ab}} \cdot
+\frac{\partial z_{ab}}{\partial x_{ij}} \\
+&amp;=&amp; \displaystyle \sum_{a,b} \frac{\partial L}{\partial z_{ab}} \cdot
+\frac{\partial \left ( \sum_k x_{ak} \cdot y_{kb} \right )}{\partial x_{ij}} \\
+&amp;=&amp; \displaystyle \sum_{b} \frac{\partial L}{\partial z_{ib}} \cdot
+\frac{\partial \left ( x_{ij} \cdot y_{jb} \right )}{\partial x_{ij}} \\
+&amp;=&amp; \displaystyle \sum_{k} \frac{\partial L}{\partial z_{ik}} \cdot
+y_{jk} \\
+&amp;=&amp; \displaystyle \sum_{k} \left ( \frac{\partial L}{\partial Z} \right )_{ik} \cdot (Y^T)_{kj} \\
+\end{array}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{\partial L}{\partial y_{ij}} = \sum_{k} (X^T)_{ik} \cdot
+\left ( \frac{\partial L}{\partial Z} \right )_{kj}\]</div>
+<p>The results of partial derivatives are the same as the definition of the dot operation, therefore the matrix
+derivatives are:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial L}{\partial X} = \frac{\partial L}{\partial Z} \cdot Y^T\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{\partial L}{\partial Y} = X^T \cdot \frac{\partial L}{\partial Z}\]</div>
+<p><strong>If</strong> <cite>x</cite> is an N-D tensor and <cite>y</cite> is an M-D tensor (M &gt;= 2), it is a sum product over the last axis of <cite>x</cite> and
+second-to-last axis of <cite>y</cite>.</p>
+<p><strong>If</strong> <cite>x</cite> is an N-D tensor and <cite>y</cite> is a 1-D array, it is a sum product over the last axis of <cite>x</cite> and <cite>y</cite>.
+It is a special case of the previous condition if <cite>y</cite> is considered as a K x 1 matrix and result is squeezed.</p>
+<dl class="method">
+<dt id="auto_diff.OpDot.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>x: auto_diff.op.operation.Operation</em>, <em>y: auto_diff.op.operation.Operation</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/auto_diff/op/op_dot.html#OpDot.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.OpDot.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 

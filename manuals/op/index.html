@@ -163,7 +163,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="element.html">Element-wise Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unary.html">Unary Operations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="binary.html">Binary Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="binary.html">Binary Operations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="binary.html#dot">dot</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <p><a class="reference internal" href="#auto_diff.Operation" title="auto_diff.Operation"><code class="xref py py-class docutils literal notranslate"><span class="pre">auto_diff.Operation</span></code></a> is used for representing calculation graphs. All the operations (e.g. sum, dot) are subclasses of <a class="reference internal" href="#auto_diff.Operation" title="auto_diff.Operation"><code class="xref py py-class docutils literal notranslate"><span class="pre">auto_diff.Operation</span></code></a>. The names and arguments of these operations follow the definitions of <a class="reference external" href="https://www.numpy.org/">numpy</a>, therefore you can use the operations similar to numpy:</p>
@@ -219,6 +222,16 @@
 <code class="descname">_get_op_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../../_modules/auto_diff/op/operation.html#Operation._get_op_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.Operation._get_op_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the name for indexing.</p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="auto_diff.Operation.dim">
+<code class="descname">dim</code><a class="headerlink" href="#auto_diff.Operation.dim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="auto_diff.Operation.isscalar">
+<code class="descname">isscalar</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../../_modules/auto_diff/op/operation.html#Operation.isscalar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.Operation.isscalar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="auto_diff.Operation.forward">
@@ -306,6 +319,12 @@
 <dt id="auto_diff.Operation.sum">
 <code class="descname">sum</code><span class="sig-paren">(</span><em>axis: Union[int, Sequence[int], None] = None, keepdims: bool = False, **kwargs</em><span class="sig-paren">)</span> &#x2192; auto_diff.op.operation.Operation<a class="reference internal" href="../../_modules/auto_diff/op/operation.html#Operation.sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.Operation.sum" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="xref py py-class docutils literal notranslate"><span class="pre">OpSum</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="auto_diff.Operation.dot">
+<code class="descname">dot</code><span class="sig-paren">(</span><em>x: auto_diff.op.operation.Operation</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; auto_diff.op.operation.Operation<a class="reference internal" href="../../_modules/auto_diff/op/operation.html#Operation.dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.Operation.dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="binary.html#auto_diff.OpDot" title="auto_diff.OpDot"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpDot</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">

@@ -493,6 +493,16 @@ operation with inverse mapping function <span class="math notranslate nohighligh
 <dd><p>Get the name for indexing.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="auto_diff.op.operation.Operation.dim">
+<code class="descname">dim</code><a class="headerlink" href="#auto_diff.op.operation.Operation.dim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="auto_diff.op.operation.Operation.isscalar">
+<code class="descname">isscalar</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/auto_diff/op/operation.html#Operation.isscalar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.op.operation.Operation.isscalar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="auto_diff.op.operation.Operation.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>feed_dict: Mapping[Union[str, Operation], numpy.ndarray] = None</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/auto_diff/op/operation.html#Operation.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.op.operation.Operation.forward" title="Permalink to this definition">¶</a></dt>
@@ -579,6 +589,12 @@ operation with inverse mapping function <span class="math notranslate nohighligh
 <dt id="auto_diff.op.operation.Operation.sum">
 <code class="descname">sum</code><span class="sig-paren">(</span><em>axis: Union[int, Sequence[int], None] = None, keepdims: bool = False, **kwargs</em><span class="sig-paren">)</span> &#x2192; auto_diff.op.operation.Operation<a class="reference internal" href="_modules/auto_diff/op/operation.html#Operation.sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.op.operation.Operation.sum" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="xref py py-class docutils literal notranslate"><span class="pre">OpSum</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="auto_diff.op.operation.Operation.dot">
+<code class="descname">dot</code><span class="sig-paren">(</span><em>x: auto_diff.op.operation.Operation</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; auto_diff.op.operation.Operation<a class="reference internal" href="_modules/auto_diff/op/operation.html#Operation.dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#auto_diff.op.operation.Operation.dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <code class="xref py py-class docutils literal notranslate"><span class="pre">OpDot</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
