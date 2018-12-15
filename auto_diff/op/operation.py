@@ -40,6 +40,13 @@ class Operation(object):
         """Get the name for indexing."""
         raise NotImplementedError('Get operation name not implemented')
 
+    @property
+    def dim(self) -> int:
+        return len(self.shape)
+
+    def isscalar(self) -> bool:
+        return self.shape in [(), (1,)]
+
     def forward(self, feed_dict: Mapping[Union[str, 'Operation'], np.ndarray] = None) -> np.ndarray:
         """Do the calculations to get the output of the operations.
 
@@ -130,6 +137,11 @@ class Operation(object):
         """See :class:`OpSum`."""
         from .op_sum import OpSum
         return OpSum(self, axis, keepdims, **kwargs)
+
+    def dot(self, x: 'Operation', **kwargs) -> 'Operation':
+        """See :class:`OpDot`."""
+        from .op_dot import OpDot
+        return OpDot(self, x, **kwargs)
 
     def __add__(self, other) -> 'Operation':
         """See :class:`OpAdd`."""

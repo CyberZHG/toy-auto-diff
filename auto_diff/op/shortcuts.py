@@ -7,7 +7,7 @@ __all__ = [
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze',
     'sum',
-    'add', 'subtract', 'multiply', 'negative', 'square',
+    'add', 'subtract', 'multiply', 'dot', 'negative', 'square',
 ]
 
 
@@ -108,6 +108,12 @@ def multiply(x: Operation, y: Operation, **kwargs) -> Operation:
     """See :class:`OpMultiply`."""
     from .op_multiply import OpMultiply
     return OpMultiply(x, y, **kwargs)
+
+
+def dot(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpDot`."""
+    from .op_dot import OpDot
+    return OpDot(x, y, **kwargs)
 
 
 def negative(x: Operation, **kwargs) -> Operation:

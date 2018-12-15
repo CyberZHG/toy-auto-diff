@@ -41,11 +41,15 @@ class OpSum(Operation):
                 self.shape = tuple(self.shape)
 
         if not self.keepdims:
-            if self.shape == (1,):
-                axis = tuple(list(range(1, len(x.shape))))
-            self.inputs[0] = self.inputs[0].\
-                sum(axis=self.axis, keepdims=True).\
-                squeeze(axis=axis, name=self.inputs[0].name)
+            if self.isscalar():
+                axis = tuple(range(1, len(x.shape)))
+            if axis:
+                self.inputs[0] = self.inputs[0].\
+                    sum(axis=self.axis, keepdims=True).\
+                    squeeze(axis=axis, name=self.inputs[0].name)
+            else:
+                self.inputs[0] = self.inputs[0].\
+                    sum(axis=self.axis, keepdims=True, name=self.inputs[0].name)
         super(OpSum, self).__init__(**kwargs)
 
     def _get_args_str(self, name):

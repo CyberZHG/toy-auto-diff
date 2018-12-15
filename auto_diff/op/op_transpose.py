@@ -49,12 +49,12 @@ class OpTranspose(Operation):
         self.inputs = [x]
         self.axes = axes
         if axes is None:
-            self.reverse_axes = None
+            self.inverse_axes = None
             self.shape = tuple(reversed(x.shape))
         else:
-            self.reverse_axes = [0] * len(axes)
+            self.inverse_axes = [0] * len(axes)
             for i, axis in enumerate(axes):
-                self.reverse_axes[axis] = i
+                self.inverse_axes[axis] = i
             self.shape = tuple(x.shape[axis] for axis in axes)
         super(OpTranspose, self).__init__(**kwargs)
 
@@ -74,5 +74,5 @@ class OpTranspose(Operation):
 
     def _backward(self, gradient: Operation) -> None:
         """Transpose the gradients to its old shape."""
-        self.gradient = gradient.transpose(axes=self.reverse_axes)
+        self.gradient = gradient.transpose(axes=self.inverse_axes)
         self.inputs[0].backward(self.gradient)

@@ -30,9 +30,11 @@ class NumGradCheck(TestCase):
                 variable.update(flattened.reshape(shape))
                 numeric_gradient[i] = np.sum(yu - yl) / (eps * 2)
             numeric_gradient = numeric_gradient.reshape(shape)
-            self.assertTrue(np.allclose(numeric_gradient, gradient), (
-                str(variable),
-                str(variable.gradient),
+            self.assertTrue(np.allclose(numeric_gradient, gradient), '\n'.join(list(map(str, [
+                '',
+                '\tInput:\t\t' + str(variable),
+                '\tGradient:\t' + str(variable.gradient),
+                '\tShape:\t\t' + str(variable.gradient.shape),
                 numeric_gradient,
                 gradient,
-            ))
+            ]))))

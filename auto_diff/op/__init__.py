@@ -10,4 +10,14 @@ from .op_flatten import OpFlatten
 from .op_expand_dims import OpExpandDims
 from .op_squeeze import OpSqueeze
 
+from .op_sum import OpSum
+
+from .op_square import OpSquare
+
+from .op_add import OpAdd
+from .op_subtract import OpSubtract
+from .op_multiply import OpMultiply
+from .op_dot import OpDot
+from .op_negative import OpNegative
+
 from .shortcuts import *
