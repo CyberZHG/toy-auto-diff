@@ -57,14 +57,12 @@ class TestOpSubtract(NumGradCheck):
 
     def test_name(self):
         z, _, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
-        self.assertEqual('(X(1, 3, 1, 4) - Y(5, 1))', z.__unicode__())
+        self.assertEqual('subtract(X(1, 3, 1, 4), Y(5, 1))', z.__unicode__())
         x = ad.placeholder(shape=(3, 4), name='X')
         y = ad.placeholder(shape=(1, 1), name='Y')
         z = ad.subtract(x, y)
-        self.assertEqual('(X - Y)', z.__unicode__())
+        self.assertEqual('subtract(X, Y)', z.__unicode__())
         z = x - 1.0
-        self.assertEqual('(X - 1.0)', z.__unicode__())
+        self.assertEqual('subtract(X, 1.0)', z.__unicode__())
         z = 1.0 - y
-        self.assertEqual('(1.0 - Y)', z.__unicode__())
-        z = (x + y) * (x - y)
-        self.assertEqual('(X + Y) * (X - Y)', z.__unicode__())
+        self.assertEqual('subtract(1.0, Y)', z.__unicode__())

@@ -13,7 +13,7 @@ class OpSubtract(Operation):
         super(OpSubtract, self).__init__(**kwargs)
 
     def _get_name(self) -> str:
-        return '(%s - %s)' % (self.inputs[0].name, self.inputs[1].name)
+        return 'subtract(%s, %s)' % (self.inputs[0].name, self.inputs[1].name)
 
     def _get_op_name(self) -> str:
         return 'subtract(%s, %s)' % (self.inputs[0]._op_name, self.inputs[1]._op_name)

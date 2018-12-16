@@ -13,6 +13,7 @@ from .op_squeeze import OpSqueeze
 from .op_sum import OpSum
 
 from .op_square import OpSquare
+from .op_exp import OpExp
 
 from .op_add import OpAdd
 from .op_subtract import OpSubtract

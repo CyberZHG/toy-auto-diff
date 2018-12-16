@@ -13,7 +13,7 @@ class OpDivide(Operation):
         super(OpDivide, self).__init__(**kwargs)
 
     def _get_name(self) -> str:
-        return '%s / %s' % (self.inputs[0].name, self.inputs[1].name)
+        return 'divide(%s, %s)' % (self.inputs[0].name, self.inputs[1].name)
 
     def _get_op_name(self) -> str:
         return 'divide(%s, %s)' % (self.inputs[0]._op_name, self.inputs[1]._op_name)

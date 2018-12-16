@@ -7,7 +7,8 @@ __all__ = [
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze',
     'sum',
-    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'square',
+    'square', 'exp',
+    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative',
 ]
 
 
@@ -92,6 +93,18 @@ def sum(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims
     return OpSum(x, axis, keepdims, **kwargs)
 
 
+def square(x: Operation, **kwargs) -> Operation:
+    """See :class:`OpSquare`."""
+    from .op_square import OpSquare
+    return OpSquare(x, **kwargs)
+
+
+def exp(x: Operation, **kwargs) -> Operation:
+    """See :class:`OpExp`."""
+    from .op_exp import OpExp
+    return OpExp(x, **kwargs)
+
+
 def add(x: Operation, y: Operation, **kwargs) -> Operation:
     """See :class:`OpAdd`."""
     from .op_add import OpAdd
@@ -126,9 +139,3 @@ def negative(x: Operation, **kwargs) -> Operation:
     """See :class:`OpNegative`."""
     from .op_negative import OpNegative
     return OpNegative(x, **kwargs)
-
-
-def square(x: Operation, **kwargs) -> Operation:
-    """See :class:`OpSquare`."""
-    from .op_square import OpSquare
-    return OpSquare(x, **kwargs)
