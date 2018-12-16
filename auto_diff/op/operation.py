@@ -20,7 +20,7 @@ class Operation(object):
             else:
                 self.name: str = self._get_name()
         if not hasattr(self, 'shape'):
-            self.shape: Sequence = None
+            self.shape: Sequence[Optional[int]] = None
             raise NotImplementedError('Shape not defined')
         if not hasattr(self, 'inputs'):
             self.inputs: Sequence['Operation'] = []
@@ -83,9 +83,18 @@ class Operation(object):
         raise NotImplementedError('Backward operation not implemented')
 
     def _broadcast_shape(self, x: 'Operation', y: 'Operation'):
+        if x.isscalar():
+            self.shape = y.shape
+            return
+        if y.isscalar():
+            self.shape = x.shape
+            return
         min_dim = min(len(x.shape), len(y.shape))
         shape = []
         for i in range(1, min_dim + 1):
+            if x.shape[-i] is None or y.shape[-i] is None:
+                shape.append(None)
+                continue
             if x.shape[-i] != 1 and y.shape[-i] != 1 and x.shape[-i] != y.shape[-i]:
                 raise ValueError('Cannot broadcast with shape %s and %s' % (str(x.shape), str(y.shape)))
             shape.append(max(x.shape[-i], y.shape[-i]))
@@ -97,7 +106,7 @@ class Operation(object):
         expand_dim = len(gradient.shape) - len(self.shape)
         axis = list(range(expand_dim))
         for i, dim in enumerate(self.shape):
-            if self.shape[i] == 1 and gradient.shape[i + expand_dim] > 1:
+            if self.shape[i] == 1 and (gradient.shape[i + expand_dim] is None or gradient.shape[i + expand_dim] > 1):
                 axis.append(expand_dim + i)
         if len(axis) == 1:
             axis = axis[0]

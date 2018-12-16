@@ -27,6 +27,13 @@ class OpVariable(Operation):
                              'got %s and %s' % (str(self.x.shape), str(value.shape)))
         self.x = value
 
+    def update_add(self, value: Union[int, float, list, np.ndarray]) -> None:
+        value = np.array(value)
+        if self.x.shape != value.shape:
+            raise ValueError('The shape of two tensors should be equal, '
+                             'got %s and %s' % (str(self.x.shape), str(value.shape)))
+        self.x += value
+
     def _get_name(self) -> str:
         return 'W%s' % str(self.x.shape)
 

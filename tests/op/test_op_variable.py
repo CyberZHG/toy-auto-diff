@@ -37,6 +37,7 @@ class TestOpVariable(NumGradCheck):
     def test_update_scalar(self):
         w = ad.variable(1.2)
         w.update(2.4)
+        w.update_add(-3.6)
         with self.assertRaises(ValueError):
             w.update(np.array([1.0]))
 
