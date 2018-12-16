@@ -17,6 +17,7 @@ from .op_square import OpSquare
 from .op_add import OpAdd
 from .op_subtract import OpSubtract
 from .op_multiply import OpMultiply
+from .op_divide import OpDivide
 from .op_dot import OpDot
 from .op_negative import OpNegative
 

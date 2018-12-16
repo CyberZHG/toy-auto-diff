@@ -183,13 +183,35 @@ class Operation(object):
             other = OpConstant(other)
         return OpMultiply(self, other)
 
-    def __rmul__(self, other):
+    def __rmul__(self, other) -> 'Operation':
         """See :class:`OpMultiply`."""
         from .op_multiply import OpMultiply
         from .op_constant import OpConstant
         if not isinstance(other, Operation):
             other = OpConstant(other)
         return OpMultiply(other, self)
+
+    def __truediv__(self, other) -> 'Operation':
+        """See :class:`OpDivide`."""
+        from .op_divide import OpDivide
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
+        return OpDivide(self, other)
+
+    def __rtruediv__(self, other) -> 'Operation':
+        """See :class:`OpDivide`."""
+        from .op_divide import OpDivide
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
+        return OpDivide(other, self)
+
+    def __floordiv__(self, other) -> 'Operation':
+        return self.__truediv__(other)
+
+    def __rfloordiv__(self, other) -> 'Operation':
+        return self.__rtruediv__(other)
 
     def __neg__(self) -> 'Operation':
         """See :class:`OpNegative`."""
