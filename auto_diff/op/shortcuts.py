@@ -7,7 +7,7 @@ __all__ = [
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze',
     'sum',
-    'square', 'exp',
+    'square', 'exp', 'log',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative',
 ]
 
@@ -103,6 +103,12 @@ def exp(x: Operation, **kwargs) -> Operation:
     """See :class:`OpExp`."""
     from .op_exp import OpExp
     return OpExp(x, **kwargs)
+
+
+def log(x: Operation, **kwargs) -> Operation:
+    """See :class:`OpLog`."""
+    from .op_log import OpLog
+    return OpLog(x, **kwargs)
 
 
 def add(x: Operation, y: Operation, **kwargs) -> Operation:
