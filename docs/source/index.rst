@@ -20,7 +20,8 @@ Install
    :maxdepth: 4
    :caption: Contents
 
-   Operations <manuals/op/index>
+   manuals/op/index
+   manuals/demo/index
 
 
 Indices and Tables

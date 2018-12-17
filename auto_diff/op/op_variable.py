@@ -15,12 +15,21 @@ class OpVariable(Operation):
         """
         if callable(initializer):
             self.x = initializer(shape)
+            self.shape = shape
+        elif np.isscalar(initializer):
+            self.x = float(initializer)
+            self.shape = ()
         else:
             self.x = np.array(initializer, dtype=np.float64)
-        self.shape = self.x.shape
+            self.shape = self.x.shape
         super(OpVariable, self).__init__(**kwargs)
 
     def update(self, value: Union[int, float, list, np.ndarray]) -> None:
+        if self.isscalar():
+            if not np.isscalar(value):
+                raise ValueError('Expect a scalar, found value with shape %s' % str(np.array(value).shape))
+            self.x = value
+            return
         value = np.array(value)
         if self.x.shape != value.shape:
             raise ValueError('The shape of two tensors should be equal, '
@@ -28,14 +37,12 @@ class OpVariable(Operation):
         self.x = value
 
     def update_add(self, value: Union[int, float, list, np.ndarray]) -> None:
-        value = np.array(value)
-        if self.x.shape != value.shape:
-            raise ValueError('The shape of two tensors should be equal, '
-                             'got %s and %s' % (str(self.x.shape), str(value.shape)))
-        self.x += value
+        old_value = self.x
+        self.update(value)
+        self.x += old_value
 
     def _get_name(self) -> str:
-        return 'W%s' % str(self.x.shape)
+        return 'W%s' % str(self.shape)
 
     def _get_op_name(self) -> str:
         return 'w_%d' % self._op_index

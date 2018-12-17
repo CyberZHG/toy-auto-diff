@@ -12,15 +12,12 @@ class OpConstant(Operation):
         :param x: The constant value.
         :param kwargs:
         """
-        if isinstance(x, int):
-            x = float(x)
-        if not np.isscalar(x) and not isinstance(x, np.ndarray):
-            x = np.array(x, dtype=np.float64)
-        self.x = x
         if np.isscalar(x):
-            self.shape = (1,)
+            self.x = float(x)
+            self.shape = ()
         else:
-            self.shape = x.shape
+            self.x = np.array(x, dtype=np.float64)
+            self.shape = self.x.shape
         super(OpConstant, self).__init__(**kwargs)
 
     def _get_name(self) -> str:

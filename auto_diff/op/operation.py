@@ -45,7 +45,7 @@ class Operation(object):
         return len(self.shape)
 
     def isscalar(self) -> bool:
-        return self.shape in [(), (1,)]
+        return self.shape == ()
 
     def forward(self, feed_dict: Mapping[Union[str, 'Operation'], np.ndarray] = None) -> np.ndarray:
         """Do the calculations to get the output of the operations.
@@ -74,7 +74,10 @@ class Operation(object):
         """
         if gradient is None:
             from .op_constant import OpConstant
-            gradient = OpConstant(np.ones(self.shape), name='ones%s' % str(self.shape))
+            if self.isscalar():
+                gradient = OpConstant(1.0)
+            else:
+                gradient = OpConstant(np.ones(self.shape), name='ones%s' % str(self.shape))
         self.gradient = gradient
         self._backward(gradient)
 
@@ -102,6 +105,9 @@ class Operation(object):
 
     def _broadcast_backward(self, gradient: 'Operation'):
         if self.shape == gradient.shape:
+            return gradient
+        if self.isscalar():
+            gradient = gradient.sum()
             return gradient
         expand_dim = len(gradient.shape) - len(self.shape)
         axis = list(range(expand_dim))

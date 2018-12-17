@@ -13,9 +13,9 @@ class OpSqueeze(Operation):
             axis = -1
         self.axis = axis
         try:
-            self.backward_axis = list(sorted(set([(a + len(x.shape)) % len(x.shape) for a in axis])))
+            self.backward_axis = list(sorted(set([(a + x.dim) % x.dim for a in axis])))
         except TypeError:
-            self.backward_axis = [axis]
+            self.backward_axis = [(axis + x.dim) % x.dim]
         self.shape = tuple(x.shape[i] for i in range(len(x.shape)) if i not in self.backward_axis)
         super(OpSqueeze, self).__init__(**kwargs)
 

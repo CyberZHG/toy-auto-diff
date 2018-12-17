@@ -3,7 +3,7 @@ import auto_diff as ad
 from .util import NumGradCheck
 
 
-class TestOpAdd(NumGradCheck):
+class TestOpDot(NumGradCheck):
 
     @staticmethod
     def _gen_random_and_result(x_shape, y_shape):

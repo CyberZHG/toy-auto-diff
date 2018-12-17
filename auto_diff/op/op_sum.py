@@ -16,40 +16,29 @@ class OpSum(Operation):
         self.axis = axis
         self.keepdims = keepdims
         if axis is None:
-            if self.keepdims:
-                self.shape = tuple([1] * len(x.shape))
+            if keepdims:
+                self.shape = tuple([1] * x.dim)
             else:
-                self.shape = (1,)
-        elif isinstance(axis, int):
-            self.shape = list(x.shape)
-            if self.keepdims:
-                self.shape[axis] = 1
-            else:
-                del self.shape[axis]
-            self.shape = tuple(self.shape)
+                self.shape = ()
+            axis = tuple(range(x.dim))
         else:
+            if isinstance(axis, int):
+                axis = [axis]
             axis = tuple(list(sorted(set([(a + len(x.shape)) % len(x.shape) for a in axis]))))
-            self.shape = list(x.shape)
+            shape = list(x.shape)
             for a in reversed(axis):
-                if self.keepdims:
-                    self.shape[a] = 1
+                if keepdims:
+                    shape[a] = 1
                 else:
-                    del self.shape[a]
-            if len(self.shape) == 0:
-                self.shape = (1,)
-            else:
-                self.shape = tuple(self.shape)
+                    del shape[a]
+            self.shape = tuple(shape)
 
-        if not self.keepdims:
-            if self.isscalar():
-                axis = tuple(range(1, len(x.shape)))
-            if axis:
-                self.inputs[0] = self.inputs[0].\
-                    sum(axis=self.axis, keepdims=True).\
-                    squeeze(axis=axis, name=self.inputs[0].name)
-            else:
-                self.inputs[0] = self.inputs[0].\
-                    sum(axis=self.axis, keepdims=True, name=self.inputs[0].name)
+        if x.isscalar():
+            self.keepdims = False
+        elif not self.keepdims:
+            self.inputs[0] = self.inputs[0].\
+                sum(axis=self.axis, keepdims=True).\
+                squeeze(axis=axis, name=self.inputs[0].name)
         super(OpSum, self).__init__(**kwargs)
 
     def _get_args_str(self, name):

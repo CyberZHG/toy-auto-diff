@@ -14,22 +14,31 @@ class NumGradCheck(TestCase):
         func.backward()
         for variable in variables:
             values = variable.forward(feed_dict)
-            shape = values.shape
-            flattened = values.flatten()
             gradient = variable.gradient.forward(feed_dict)
-            numeric_gradient = np.zeros_like(flattened, dtype=np.float64)
-            for i in range(flattened.shape[0]):
-                origin = float(flattened[i])
-                flattened[i] = origin - eps
-                variable.update(flattened.reshape(shape))
+            if np.isscalar(values):
+                origin = values
+                variable.update(origin - eps)
                 yl = func.forward(feed_dict)
-                flattened[i] = origin + eps
-                variable.update(flattened.reshape(shape))
+                variable.update(origin + eps)
                 yu = func.forward(feed_dict)
-                flattened[i] = origin
-                variable.update(flattened.reshape(shape))
-                numeric_gradient[i] = np.sum(yu - yl) / (eps * 2)
-            numeric_gradient = numeric_gradient.reshape(shape)
+                variable.update(origin)
+                numeric_gradient = np.sum(yu - yl) / (eps * 2)
+            else:
+                shape = values.shape
+                flattened = values.flatten()
+                numeric_gradient = np.zeros_like(flattened, dtype=np.float64)
+                for i in range(flattened.shape[0]):
+                    origin = float(flattened[i])
+                    flattened[i] = origin - eps
+                    variable.update(flattened.reshape(shape))
+                    yl = func.forward(feed_dict)
+                    flattened[i] = origin + eps
+                    variable.update(flattened.reshape(shape))
+                    yu = func.forward(feed_dict)
+                    flattened[i] = origin
+                    variable.update(flattened.reshape(shape))
+                    numeric_gradient[i] = np.sum(yu - yl) / (eps * 2)
+                numeric_gradient = numeric_gradient.reshape(shape)
             self.assertTrue(np.allclose(numeric_gradient, gradient), '\n'.join(list(map(str, [
                 '',
                 '\tInput:\t\t' + str(variable),

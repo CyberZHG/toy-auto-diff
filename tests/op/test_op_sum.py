@@ -11,7 +11,7 @@ class TestOpSum(NumGradCheck):
         y = w.transpose().sum()
         actual = y.forward()
         expect = np.sum(val)
-        self.assertEqual((1,), y.shape)
+        self.assertEqual((), y.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
         y = w.transpose().sum(axis=-1)
         actual = y.forward()
@@ -26,7 +26,7 @@ class TestOpSum(NumGradCheck):
         y = w.transpose().sum(axis=(0, -1))
         actual = y.forward()
         expect = np.sum(val)
-        self.assertEqual((1,), y.shape)
+        self.assertEqual((), y.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
 
     def test_forward_keepdims(self):
