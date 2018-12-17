@@ -67,6 +67,9 @@ class Operation(object):
         """Forward operation to be implemented."""
         raise NotImplementedError('Forward operation not implemented')
 
+    def clear_gradient(self):
+        self.gradient = None
+
     def backward(self, gradient: 'Operation' = None) -> None:
         """Update gradients recursively.
 
@@ -78,7 +81,6 @@ class Operation(object):
                 gradient = OpConstant(1.0)
             else:
                 gradient = OpConstant(np.ones(self.shape), name='ones%s' % str(self.shape))
-        self.gradient = gradient
         self._backward(gradient)
 
     def _backward(self, gradient: 'Operation') -> None:

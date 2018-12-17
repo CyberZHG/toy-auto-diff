@@ -11,6 +11,8 @@ class NumGradCheck(TestCase):
                                feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray],
                                variables: List[OpVariable]):
         eps = 1e-8
+        for variable in variables:
+            variable.clear_gradient()
         func.backward()
         for variable in variables:
             values = variable.forward(feed_dict)
@@ -39,11 +41,15 @@ class NumGradCheck(TestCase):
                     variable.update(flattened.reshape(shape))
                     numeric_gradient[i] = np.sum(yu - yl) / (eps * 2)
                 numeric_gradient = numeric_gradient.reshape(shape)
-            self.assertTrue(np.allclose(numeric_gradient, gradient), '\n'.join(list(map(str, [
+            self.assertTrue(np.alltrue(numeric_gradient - gradient < 1e-6), '\n'.join(list(map(str, [
                 '',
                 '\tInput:\t\t' + str(variable),
                 '\tGradient:\t' + str(variable.gradient),
                 '\tShape:\t\t' + str(variable.gradient.shape),
+                '\tNumerical:',
                 numeric_gradient,
+                '\tActual:',
                 gradient,
+                '\tDiff:',
+                numeric_gradient - gradient,
             ]))))

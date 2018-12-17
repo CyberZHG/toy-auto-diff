@@ -53,4 +53,7 @@ class OpVariable(Operation):
 
     def _backward(self, gradient: Operation) -> None:
         """No backward operation needed."""
-        pass
+        if self.gradient is None:
+            self.gradient = gradient
+        else:
+            self.gradient += gradient
