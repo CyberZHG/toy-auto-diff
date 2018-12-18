@@ -167,6 +167,11 @@ class Operation(object):
         from .op_max import OpMax
         return OpMax(self, axis, keepdims, **kwargs)
 
+    def min(self, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> 'Operation':
+        """See :class:`OpMin`."""
+        from .op_min import OpMin
+        return OpMin(self, axis, keepdims, **kwargs)
+
     def dot(self, x: 'Operation', **kwargs) -> 'Operation':
         """See :class:`OpDot`."""
         from .op_dot import OpDot

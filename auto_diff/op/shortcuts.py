@@ -6,7 +6,7 @@ __all__ = [
     'array', 'constant', 'placeholder', 'variable', 'setitem',
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
-    'sum', 'prod', 'mean', 'max', 'argmax',
+    'sum', 'prod', 'mean', 'max', 'min', 'argmax',
     'square', 'exp', 'log',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal',
 ]
@@ -121,6 +121,12 @@ def max(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims
     """See :class:`OpMax`."""
     from .op_max import OpMax
     return OpMax(x, axis, keepdims, **kwargs)
+
+
+def min(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> Operation:
+    """See :class:`OpMin`."""
+    from .op_min import OpMin
+    return OpMin(x, axis, keepdims, **kwargs)
 
 
 def argmax(x: Operation, axis: Optional[int] = None, **kwargs) -> Operation:
