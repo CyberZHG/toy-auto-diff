@@ -5,7 +5,7 @@ from .operation import Operation
 __all__ = [
     'array', 'constant', 'placeholder', 'variable',
     'ones', 'zeros', 'ones_like', 'zeros_like',
-    'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze',
+    'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
     'sum', 'argmax',
     'square', 'exp', 'log',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative',
@@ -87,8 +87,14 @@ def squeeze(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, **kw
     return OpSqueeze(x, axis, **kwargs)
 
 
+def shape(x: Operation, **kwargs) -> Operation:
+    """See :class:`OpShape`."""
+    from .op_shape import OpShape
+    return OpShape(x, **kwargs)
+
+
 def sum(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> Operation:
-    """See :class:`OpSum`."""
+    """See :class:`Opum`."""
     from .op_sum import OpSum
     return OpSum(x, axis, keepdims, **kwargs)
 

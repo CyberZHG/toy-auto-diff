@@ -32,4 +32,4 @@ class OpArgmax(Operation):
         return np.argmax(self.inputs[0].forward(feed_dict), axis=self.axis)
 
     def _backward(self, gradient: Operation) -> None:
-        raise NotImplementedError('argmax is not differentiable')
+        raise NotImplementedError('`argmax` is not differentiable')

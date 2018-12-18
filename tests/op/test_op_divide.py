@@ -53,7 +53,7 @@ class TestOpDivide(NumGradCheck):
         z, variables, _ = self._gen_random_and_result((3, 4), (4,))
         self.numeric_gradient_check(z, {}, variables)
         z, variables, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
-        self.numeric_gradient_check(z, {}, variables)
+        self.numeric_gradient_check(z, {}, variables, atol=1e-5)
 
     def test_name(self):
         z, _, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
