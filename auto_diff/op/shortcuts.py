@@ -9,7 +9,7 @@ __all__ = [
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
     'square', 'exp', 'log',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal',
-    'maximum',
+    'maximum', 'minimum',
 ]
 
 
@@ -200,3 +200,9 @@ def maximum(x: Operation, y: Operation, **kwargs) -> Operation:
     """See :class:`OpMaximum`"""
     from .op_maximum import OpMaximum
     return OpMaximum(x, y, **kwargs)
+
+
+def minimum(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpMinimum`"""
+    from .op_minimum import OpMinimum
+    return OpMinimum(x, y, **kwargs)
