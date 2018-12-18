@@ -1,12 +1,17 @@
 import auto_diff as ad
 
 
-__all__ = ['relu', 'softmax']
+__all__ = ['relu', 'leaky_relu', 'softmax']
 
 
 def relu(x: ad.Operation) -> ad.Operation:
     """ReLU"""
     return ad.maximum(x, ad.constant(0.0))
+
+
+def leaky_relu(x: ad.Operation, alpha=0.01) -> ad.Operation:
+    """Leaky ReLU"""
+    return ad.maximum(x, ad.constant(0.0)) + ad.minimum(x, ad.constant(0.0)) * ad.constant(alpha)
 
 
 def softmax(x: ad.Operation) -> ad.Operation:
