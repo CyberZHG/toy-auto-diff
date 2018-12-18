@@ -155,6 +155,11 @@ class Operation(object):
         from .op_sum import OpSum
         return OpSum(self, axis, keepdims, **kwargs)
 
+    def prod(self, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> 'Operation':
+        """See :class:`OpProd`."""
+        from .op_prod import OpProd
+        return OpProd(self, axis, keepdims, **kwargs)
+
     def dot(self, x: 'Operation', **kwargs) -> 'Operation':
         """See :class:`OpDot`."""
         from .op_dot import OpDot

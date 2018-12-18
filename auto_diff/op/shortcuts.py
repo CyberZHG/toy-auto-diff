@@ -6,7 +6,7 @@ __all__ = [
     'array', 'constant', 'placeholder', 'variable', 'setitem',
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
-    'sum', 'argmax',
+    'sum', 'prod', 'argmax',
     'square', 'exp', 'log',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative',
 ]
@@ -100,9 +100,15 @@ def shape(x: Operation, **kwargs) -> Operation:
 
 
 def sum(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> Operation:
-    """See :class:`Opum`."""
+    """See :class:`OpSum`."""
     from .op_sum import OpSum
     return OpSum(x, axis, keepdims, **kwargs)
+
+
+def prod(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> Operation:
+    """See :class:`OpProd`."""
+    from .op_prod import OpProd
+    return OpProd(x, axis, keepdims, **kwargs)
 
 
 def argmax(x: Operation, axis: Optional[int] = None, **kwargs) -> Operation:
