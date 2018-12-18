@@ -1,5 +1,5 @@
 from unittest import TestCase
-from demos.basic.linear_regression.linear import main as linear_main
+from demos.basic.linear.regression import main as linear_main
 
 
 class TestLinearRegression(TestCase):
