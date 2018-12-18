@@ -38,6 +38,15 @@ class TestOpGetItem(NumGradCheck):
         expect = val[0, :-2:-1, ::-2]
         self.assertEqual(expect.shape, y.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
+        x = ad.placeholder(shape=(None, 12))
+        y = x[:, 3:5]
+        self.assertEqual((None, 2), y.shape)
+        x = ad.placeholder(shape=(None, 12))
+        y = x[1:, 3:5]
+        self.assertEqual((None, 2), y.shape)
+        x = ad.placeholder(shape=(None, 12))
+        y = x[4:6, 3:5]
+        self.assertEqual((None, 2), y.shape)  # Because the first dimension may be less than 6
 
     def test_backward(self):
         val = np.random.random((1, 2, 3))
