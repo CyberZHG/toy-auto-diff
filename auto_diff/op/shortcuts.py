@@ -6,7 +6,7 @@ __all__ = [
     'array', 'constant', 'placeholder', 'variable',
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze',
-    'sum',
+    'sum', 'argmax',
     'square', 'exp', 'log',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative',
 ]
@@ -91,6 +91,12 @@ def sum(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims
     """See :class:`OpSum`."""
     from .op_sum import OpSum
     return OpSum(x, axis, keepdims, **kwargs)
+
+
+def argmax(x: Operation, axis: Optional[int] = None, **kwargs) -> Operation:
+    """See :class:`OpArgmax`."""
+    from .op_argmax import OpArgmax
+    return OpArgmax(x, axis, **kwargs)
 
 
 def square(x: Operation, **kwargs) -> Operation:
