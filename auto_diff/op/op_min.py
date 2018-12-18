@@ -16,10 +16,10 @@ class OpMin(OpKeepdims):
         super(OpMin, self).__init__(self.__class__, x, axis, keepdims, **kwargs)
 
     def _get_name(self) -> str:
-        return 'max' + self._get_args_str(self.inputs[0].name)
+        return 'min' + self._get_args_str(self.inputs[0].name)
 
     def _get_op_name(self) -> str:
-        return 'max' + self._get_args_str(self.inputs[0]._op_name)
+        return 'min' + self._get_args_str(self.inputs[0]._op_name)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         if not self.keepdims:
