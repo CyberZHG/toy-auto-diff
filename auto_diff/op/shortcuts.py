@@ -9,6 +9,7 @@ __all__ = [
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
     'square', 'exp', 'log',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal',
+    'maximum',
 ]
 
 
@@ -193,3 +194,9 @@ def equal(x: Operation, y: Operation, **kwargs) -> Operation:
     """See :class:`OpEqual`."""
     from .op_equal import OpEqual
     return OpEqual(x, y, **kwargs)
+
+
+def maximum(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpMaximum`"""
+    from .op_maximum import OpMaximum
+    return OpMaximum(x, y, **kwargs)

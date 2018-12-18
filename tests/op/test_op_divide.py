@@ -43,15 +43,15 @@ class TestOpDivide(NumGradCheck):
 
     def test_backward(self):
         z, variables, _ = self._gen_random_and_result((3, 4), (3, 4))
-        self.numeric_gradient_check(z, {}, variables)
+        self.numeric_gradient_check(z, {}, variables, atol=1e-5)
         z, variables, _ = self._gen_random_and_result((3, 1), (3, 4))
-        self.numeric_gradient_check(z, {}, variables)
+        self.numeric_gradient_check(z, {}, variables, atol=1e-5)
         z, variables, _ = self._gen_random_and_result((3, 4), (3, 1))
-        self.numeric_gradient_check(z, {}, variables)
+        self.numeric_gradient_check(z, {}, variables, atol=1e-5)
         z, variables, _ = self._gen_random_and_result((4,), (3, 4))
-        self.numeric_gradient_check(z, {}, variables)
+        self.numeric_gradient_check(z, {}, variables, atol=1e-5)
         z, variables, _ = self._gen_random_and_result((3, 4), (4,))
-        self.numeric_gradient_check(z, {}, variables)
+        self.numeric_gradient_check(z, {}, variables, atol=1e-5)
         z, variables, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
         self.numeric_gradient_check(z, {}, variables, atol=1e-5)
 
