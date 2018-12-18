@@ -1,7 +1,7 @@
 import auto_diff as ad
 
 
-__all__ = ['relu', 'leaky_relu', 'softmax']
+__all__ = ['relu', 'leaky_relu', 'softmax', 'sigmoid']
 
 
 def relu(x: ad.Operation) -> ad.Operation:
@@ -37,3 +37,8 @@ def softmax(x: ad.Operation) -> ad.Operation:
     y = e / (s + 1e-8)
     y.name = 'softmax(%s)' % x.name
     return y
+
+
+def sigmoid(x: ad.Operation) -> ad.Operation:
+    """Sigmoid"""
+    return 1.0 / (1.0 + ad.exp(-x))
