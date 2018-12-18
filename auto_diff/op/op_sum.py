@@ -2,9 +2,10 @@ from typing import Mapping, Union, Optional, Sequence
 import numpy as np
 from .operation import Operation
 from .op_placeholder import OpPlaceholder
+from .op_keepdims import OpKeepdims
 
 
-class OpSum(Operation):
+class OpSum(OpKeepdims):
     """Sum of elements over a given axis."""
 
     def __init__(self,
@@ -12,42 +13,7 @@ class OpSum(Operation):
                  axis: Optional[Union[int, Sequence[int]]] = None,
                  keepdims: bool = False,
                  **kwargs):
-        self.inputs = [x]
-        self.axis = axis
-        self.keepdims = keepdims
-        if axis is None:
-            if keepdims:
-                self.shape = tuple([1] * x.dim)
-            else:
-                self.shape = ()
-            axis = tuple(range(x.dim))
-        else:
-            if isinstance(axis, int):
-                axis = [axis]
-            axis = tuple(list(sorted(set([(a + len(x.shape)) % len(x.shape) for a in axis]))))
-            shape = list(x.shape)
-            for a in reversed(axis):
-                if keepdims:
-                    shape[a] = 1
-                else:
-                    del shape[a]
-            self.shape = tuple(shape)
-
-        if x.isscalar():
-            self.keepdims = False
-        elif not self.keepdims:
-            self.inputs[0] = self.inputs[0].\
-                sum(axis=self.axis, keepdims=True).\
-                squeeze(axis=axis, name=self.inputs[0].name)
-        super(OpSum, self).__init__(**kwargs)
-
-    def _get_args_str(self, name):
-        args = [name]
-        if self.axis is not None:
-            args.append('axis=%s' % str(self.axis))
-        if self.keepdims:
-            args.append('keepdims=%s' % str(self.keepdims))
-        return '(' + ', '.join(args) + ')'
+        super(OpSum, self).__init__(self.__class__, x, axis, keepdims, **kwargs)
 
     def _get_name(self) -> str:
         return 'sum' + self._get_args_str(self.inputs[0].name)

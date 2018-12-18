@@ -3,7 +3,7 @@ import numpy as np
 from .operation import Operation
 
 __all__ = [
-    'array', 'constant', 'placeholder', 'variable',
+    'array', 'constant', 'placeholder', 'variable', 'setitem',
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
     'sum', 'argmax',
@@ -55,6 +55,12 @@ def variable(initializer: Union[Callable, int, float, list, np.ndarray], shape: 
     """See :class:`OpVariable`."""
     from .op_variable import OpVariable
     return OpVariable(initializer, shape, **kwargs)
+
+
+def setitem(x: Operation, key, value: Operation, **kwargs) -> Operation:
+    """See :class:`OpSetitem`."""
+    from .op_setitem import OpSetitem
+    return OpSetitem(x, key, value, **kwargs)
 
 
 def transpose(x: Operation, axes: Optional[Sequence[int]] = None, **kwargs) -> Operation:

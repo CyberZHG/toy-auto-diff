@@ -235,6 +235,11 @@ class Operation(object):
         from .op_negative import OpNegative
         return OpNegative(self)
 
+    def __getitem__(self, item) -> 'Operation':
+        """See :class:`OpGetitem`."""
+        from .op_getitem import OpGetitem
+        return OpGetitem(self, item)
+
     def simplify(self) -> 'Operation':
         from ..simple import simplify
         return simplify(self)
