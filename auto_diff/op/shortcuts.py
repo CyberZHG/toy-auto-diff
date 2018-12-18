@@ -7,7 +7,7 @@ __all__ = [
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
-    'square', 'exp', 'log',
+    'square', 'exp', 'log', 'tanh',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal',
     'maximum', 'minimum',
 ]
@@ -152,6 +152,12 @@ def log(x: Operation, **kwargs) -> Operation:
     """See :class:`OpLog`."""
     from .op_log import OpLog
     return OpLog(x, **kwargs)
+
+
+def tanh(x: Operation, **kwargs) -> Operation:
+    """See :class:`OpTanh`."""
+    from .op_tanh import OpTanh
+    return OpTanh(x, **kwargs)
 
 
 def add(x: Operation, y: Operation, **kwargs) -> Operation:
