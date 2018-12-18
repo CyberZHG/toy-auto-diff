@@ -6,9 +6,9 @@ __all__ = [
     'array', 'constant', 'placeholder', 'variable', 'setitem',
     'ones', 'zeros', 'ones_like', 'zeros_like',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
-    'sum', 'prod', 'argmax',
+    'sum', 'prod', 'mean', 'argmax',
     'square', 'exp', 'log',
-    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative',
+    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal',
 ]
 
 
@@ -111,6 +111,12 @@ def prod(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdim
     return OpProd(x, axis, keepdims, **kwargs)
 
 
+def mean(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> Operation:
+    """See :class:`OpMean`."""
+    from .op_mean import OpMean
+    return OpMean(x, axis, keepdims, **kwargs)
+
+
 def argmax(x: Operation, axis: Optional[int] = None, **kwargs) -> Operation:
     """See :class:`OpArgmax`."""
     from .op_argmax import OpArgmax
@@ -169,3 +175,9 @@ def negative(x: Operation, **kwargs) -> Operation:
     """See :class:`OpNegative`."""
     from .op_negative import OpNegative
     return OpNegative(x, **kwargs)
+
+
+def equal(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpEqual`."""
+    from .op_equal import OpEqual
+    return OpEqual(x, y, **kwargs)

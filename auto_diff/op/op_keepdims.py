@@ -48,18 +48,3 @@ class OpKeepdims(Operation):
         if self.keepdims:
             args.append('keepdims=%s' % str(self.keepdims))
         return '(' + ', '.join(args) + ')'
-
-    def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        """Sum over axis"""
-        if not self.keepdims:
-            return self.inputs[0].forward(feed_dict)
-        return np.sum(self.inputs[0].forward(feed_dict), axis=self.axis, keepdims=True)
-
-    def _backward(self, gradient: Operation) -> None:
-        """Expand the dimensions of the gradient."""
-        from .op_ones_like import OpOnesLike
-        if not self.keepdims:
-            self.inputs[0].backward(gradient)
-            return
-        self.gradient = OpOnesLike(self.inputs[0]) * gradient
-        self.inputs[0].backward(self.gradient)

@@ -7,8 +7,6 @@ class Operation(object):
 
     #: The counter for giving each operation a unique index.
     __op_counter = [0]
-    #: Collection of existing operations.
-    __op_collection = {}
 
     #: The key for extracting step information from session.
     STEP_KEY = '__step__'
@@ -28,7 +26,6 @@ class Operation(object):
         self._op_index = self.__op_counter[0]
         self.__op_counter[0] += 1
         self._op_name = self._get_op_name()
-        self.__op_collection[self] = self
         self._last_step = -1
         self._last_forward = None
 
@@ -159,6 +156,11 @@ class Operation(object):
         """See :class:`OpProd`."""
         from .op_prod import OpProd
         return OpProd(self, axis, keepdims, **kwargs)
+
+    def mean(self, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> 'Operation':
+        """See :class:`OpMean`."""
+        from .op_mean import OpMean
+        return OpMean(self, axis, keepdims, **kwargs)
 
     def dot(self, x: 'Operation', **kwargs) -> 'Operation':
         """See :class:`OpDot`."""

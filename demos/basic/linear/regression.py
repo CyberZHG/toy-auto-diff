@@ -34,7 +34,7 @@ def gen_linear_model(config: dict, verbose=False):
     b = ad.variable(0.0, name='b')
 
     y_pred = ad.dot(x, w) + b
-    loss = ad.square(y - y_pred).sum() / config['batch_size']
+    loss = ad.square(y - y_pred).mean()
     loss.backward()
 
     if verbose:

@@ -34,7 +34,7 @@ def gen_linear_model(config: dict, verbose=False):
     b = ad.variable(np.zeros(2), name='b')
 
     y_pred = ad.acts.softmax(ad.dot(x, w) + b)
-    loss = ad.losses.cross_entropy(y_true, y_pred).sum() / config['batch_size']
+    loss = ad.losses.cross_entropy(y_true, y_pred).mean()
     loss.backward()
 
     if verbose:

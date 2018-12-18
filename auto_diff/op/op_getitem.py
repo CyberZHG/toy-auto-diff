@@ -15,31 +15,10 @@ class OpGetitem(Operation):
             item = (item,)
         for i, s in enumerate(item):
             if isinstance(s, slice):
-                start, stop, step = s.start, s.stop, s.step
-                if step is None:
-                    step = 1
-                if step > 0:
-                    if start is None:
-                        start = 0
-                    if stop is None:
-                        stop = x.shape[i]
-                else:
-                    if start is None:
-                        start = x.shape[i]
-                    if stop is None:
-                        stop = 0
-                    start, stop, step = stop, start, -step
-                if start is None or stop is None:
+                if x.shape[i] is None:
                     shape.append(None)
                 else:
-                    if start < 0:
-                        start = (start + x.shape[i]) % x.shape[i]
-                    if stop < 0:
-                        stop = (stop + x.shape[i]) % x.shape[i]
-                    if start >= stop:
-                        shape.append(0)
-                    else:
-                        shape.append((stop - start - 1) // step + 1)
+                    shape.append(len(range(*s.indices(x.shape[i]))))
         self.shape = tuple(shape) + x.shape[len(item):]
         super(OpGetitem, self).__init__(**kwargs)
 

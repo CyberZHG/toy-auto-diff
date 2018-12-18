@@ -33,9 +33,9 @@ class TestOpGetItem(NumGradCheck):
         expect = val[0, :, :2:]
         self.assertEqual(expect.shape, y.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
-        y = x[0, ::-1, ::-2]
+        y = x[0, :-2:-1, ::-2]
         actual = y.forward()
-        expect = val[0, ::-1, ::-2]
+        expect = val[0, :-2:-1, ::-2]
         self.assertEqual(expect.shape, y.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
 
@@ -52,7 +52,7 @@ class TestOpGetItem(NumGradCheck):
         self.numeric_gradient_check(y, {}, [x])
         y = x[0, :, :2:]
         self.numeric_gradient_check(y, {}, [x])
-        y = x[0, ::-1, ::-2]
+        y = x[0, :-2:-1, ::-2]
         self.numeric_gradient_check(y, {}, [x])
 
     def test_name(self):
