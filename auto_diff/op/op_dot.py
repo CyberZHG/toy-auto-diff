@@ -84,22 +84,22 @@ class OpDot(Operation):
         elif y.isscalar():
             self.shape = x.shape
         elif x.dim == 1 and y.dim == 1:
-            if x.shape[0] != y.shape[0]:
+            if x.shape[0] is not None and y.shape[0] is not None and x.shape[0] != y.shape[0]:
                 raise ValueError('The dimensions of inputs should be equal, found %s and %s'
                                  % (str(x.shape), str(y.shape)))
             self.shape = ()
         elif x.dim == 2 and y.dim == 2:
-            if x.shape[1] != y.shape[0]:
+            if x.shape[1] is not None and y.shape[0] is not None and x.shape[1] != y.shape[0]:
                 raise ValueError('The last dimension of the first input and the first dimension of the second input '
                                  'should be equal, found %s and %s' % (str(x.shape), str(y.shape)))
             self.shape = (x.shape[0], y.shape[1])
         elif y.dim == 1:
-            if x.shape[-1] != y.shape[0]:
+            if x.shape[-1] is not None and y.shape[0] is not None and x.shape[-1] != y.shape[0]:
                 raise ValueError('The last dimension of the first input and dimension of the second input '
                                  'should be equal, found %s and %s' % (str(x.shape), str(y.shape)))
             self.shape = x.shape[:-1]
         else:
-            if x.shape[-1] != y.shape[-2]:
+            if x.shape[-1] is not None and y.shape[-2] is None and x.shape[-1] != y.shape[-2]:
                 raise ValueError('The last dimension of the first input and second-to-last dimension of the second '
                                  'input should be equal, found %s and %s' % (str(x.shape), str(y.shape)))
             self.shape = x.shape[:-1] + y.shape[:-2] + (y.shape[-1],)

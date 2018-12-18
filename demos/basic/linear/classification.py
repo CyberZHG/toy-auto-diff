@@ -9,6 +9,7 @@ def gen_config(base_config: dict = None) -> dict:
         config['input_len'] = base_config['input_len']
     config = {
         'input_len': config['input_len'],
+        'hidden_dim': np.random.randint(10, 50),
         'batch_size': np.random.randint(32, 500),
         'learning_rate': 1e-4,
         'expected_w': (np.random.random(config['input_len']) - 0.5) * 10.0,
@@ -28,21 +29,29 @@ def gen_linear_model(config: dict, verbose=False):
     :return: Model, loss, placeholders and variables.
     """
     x = ad.placeholder(shape=(None, config['input_len']), name='X')
-    y_true = ad.placeholder(shape=(None, 2), name='Y')
+    y = ad.placeholder(shape=(None,), name='Y')
 
-    w = ad.variable(np.random.random((config['input_len'], 2)), name='W')
-    b = ad.variable(np.zeros(2), name='b')
+    w1 = ad.variable(np.random.random((config['input_len'], config['hidden_dim'])), name='W1')
+    b1 = ad.variable(np.zeros(config['hidden_dim']), name='b1')
 
-    y_pred = ad.acts.softmax(ad.dot(x, w) + b)
-    loss = ad.losses.cross_entropy(y_true, y_pred).mean()
+    v = ad.acts.leaky_relu(ad.dot(x, w1) + b1)
+
+    w2 = ad.variable(np.random.random((config['hidden_dim'], 2)), name='W2')
+    b2 = ad.variable(np.zeros(2), name='b2')
+
+    y_pred = ad.acts.softmax(ad.dot(v, w2) + b2)
+
+    loss = ad.square(y - y_pred).mean()
     loss.backward()
 
     if verbose:
         print('Loss:', loss)
-        print('Gradient for W:', w.gradient)
-        print('Gradient for b:', b.gradient)
+        print('Gradient for W1:', w1.gradient)
+        print('Gradient for b1:', b1.gradient)
+        print('Gradient for W2:', w2.gradient)
+        print('Gradient for b2:', b2.gradient)
 
-    return y_pred, loss, [x, y_true], [w, b]
+    return y_pred, loss, [x, y], [w1, b1, w2, b2]
 
 
 def data_generator(config: dict):
@@ -111,7 +120,7 @@ def check_result(model: ad.Operation, placeholders: list, config: dict, verbose=
             print('Expected: ', y_true_cls[:5])
             print('Actual:   ', y_pred_cls[:5])
             print('Accuracy: ', accuracy)
-        assert accuracy > 0.9
+        assert accuracy > 0.8
         break
 
 
