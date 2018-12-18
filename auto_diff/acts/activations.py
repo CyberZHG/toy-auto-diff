@@ -1,7 +1,12 @@
 import auto_diff as ad
 
 
-__all__ = ['softmax']
+__all__ = ['relu', 'softmax']
+
+
+def relu(x: ad.Operation) -> ad.Operation:
+    """ReLU"""
+    return ad.maximum(x, ad.constant(0.0))
 
 
 def softmax(x: ad.Operation) -> ad.Operation:
