@@ -21,8 +21,8 @@ def softmax(x: ad.Operation) -> ad.Operation:
     :param x: Input operation.
     :return: The result operation.
     """
-    # TODO: Need max operator
-    e = ad.exp(x)
+    m = ad.max(x, axis=-1, keepdims=True)
+    e = ad.exp(x - m)
     s = ad.sum(e, axis=-1, keepdims=True)
     y = e / (s + 1e-8)
     y.name = 'softmax(%s)' % x.name
