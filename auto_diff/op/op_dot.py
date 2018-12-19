@@ -99,7 +99,7 @@ class OpDot(Operation):
                                  'should be equal, found %s and %s' % (str(x.shape), str(y.shape)))
             self.shape = x.shape[:-1]
         else:
-            if x.shape[-1] is not None and y.shape[-2] is None and x.shape[-1] != y.shape[-2]:
+            if x.shape[-1] is not None and y.shape[-2] is not None and x.shape[-1] != y.shape[-2]:
                 raise ValueError('The last dimension of the first input and second-to-last dimension of the second '
                                  'input should be equal, found %s and %s' % (str(x.shape), str(y.shape)))
             self.shape = x.shape[:-1] + y.shape[:-2] + (y.shape[-1],)
