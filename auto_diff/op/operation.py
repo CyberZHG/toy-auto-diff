@@ -73,11 +73,8 @@ class Operation(object):
         :param gradient: Current gradient.
         """
         if gradient is None:
-            from .op_constant import OpConstant
-            if self.isscalar():
-                gradient = OpConstant(1.0)
-            else:
-                gradient = OpConstant(np.ones(self.shape), name='ones%s' % str(self.shape))
+            from .op_ones_like import OpOnesLike
+            gradient = OpOnesLike(self)
         self._backward(gradient)
 
     def _backward(self, gradient: 'Operation') -> None:

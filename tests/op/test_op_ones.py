@@ -9,7 +9,7 @@ class TestOpOnes(NumGradCheck):
         ones = ad.ones(5)
         actual = ones.forward()
         expect = np.ones(5)
-        self.assertEqual((5,), ones.shape)
+        self.assertEqual(5, ones.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
         ones = ad.ones((3, 5)).transpose()
         actual = ones.forward()

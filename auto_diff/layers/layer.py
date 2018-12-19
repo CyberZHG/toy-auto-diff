@@ -25,10 +25,10 @@ class Layer(object):
     def __call__(self, inputs: Union['Layer', List['Layer']], **kwargs):
         if self._outputs is None:
             self._inputs = inputs
-            self._input_shapes = inputs._output_shapes
+            self._input_shapes = inputs.output_shapes
             self.build(self._input_shapes)
             self._output_shapes = self.compute_output_shape(self._input_shapes)
-            self._outputs = self.call(inputs._outputs, **kwargs)
+            self._outputs = self.call(inputs.outputs, **kwargs)
         return self
 
     @property
