@@ -17,9 +17,6 @@ class OpPlaceholder(Operation):
     def _get_name(self) -> str:
         return 'X%s' % str(self.shape)
 
-    def _get_op_name(self) -> str:
-        return 'x_%d' % self._op_index
-
     def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]):
         """Finds and returns the value in feed dictionary."""
         return feed_dict[self]

@@ -11,6 +11,3 @@ class OpFlatten(OpReshape):
 
     def _get_name(self) -> str:
         return 'flatten(%s)' % self.inputs[0].name
-
-    def _get_op_name(self) -> str:
-        return 'flatten(%s)' % self.inputs[0]._op_name

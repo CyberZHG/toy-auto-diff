@@ -15,9 +15,6 @@ class OpMaximum(Operation):
     def _get_name(self) -> str:
         return 'maximum(%s, %s)' % (self.inputs[0].name, self.inputs[1].name)
 
-    def _get_op_name(self) -> str:
-        return 'maximum(%s, %s)' % (self.inputs[0]._op_name, self.inputs[1]._op_name)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         return np.maximum(self.inputs[0].forward(feed_dict), self.inputs[1].forward(feed_dict))
 

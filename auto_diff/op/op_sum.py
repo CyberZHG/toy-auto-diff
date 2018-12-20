@@ -18,9 +18,6 @@ class OpSum(OpKeepdims):
     def _get_name(self) -> str:
         return 'sum' + self._get_args_str(self.inputs[0].name)
 
-    def _get_op_name(self) -> str:
-        return 'sum' + self._get_args_str(self.inputs[0]._op_name)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Sum over axis"""
         if not self.keepdims:

@@ -24,11 +24,6 @@ class OpSqueeze(Operation):
             return 'squeeze(%s)' % self.inputs[0].name
         return 'squeeze(%s, axis=%s)' % (self.inputs[0].name, str(self.axis))
 
-    def _get_op_name(self) -> str:
-        if self.axis == -1:
-            return 'squeeze(%s)' % self.inputs[0]._op_name
-        return 'squeeze(%s, axis=%s)' % (self.inputs[0]._op_name, str(self.axis))
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Squeeze the tensor."""
         return self.inputs[0].forward(feed_dict).squeeze(axis=self.axis)

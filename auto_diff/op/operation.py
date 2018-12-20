@@ -13,10 +13,9 @@ class Operation(object):
 
     def __init__(self, **kwargs):
         if not hasattr(self, 'name'):
+            self._name = None
             if 'name' in kwargs:
-                self.name: str = kwargs['name']
-            else:
-                self.name: str = self._get_name()
+                self._name = kwargs['name']
         if not hasattr(self, 'shape'):
             self.shape: Sequence[Optional[int]] = None
             raise NotImplementedError('Shape not defined')
@@ -25,17 +24,22 @@ class Operation(object):
         self.gradient: Optional['Operation'] = None
         self._op_index = self.__op_counter[0]
         self.__op_counter[0] += 1
-        self._op_name = self._get_op_name()
         self._last_step = -1
         self._last_forward = None
+
+    @property
+    def name(self) -> str:
+        if self._name is not None:
+            return self._name
+        return self._get_name()
+
+    @name.setter
+    def name(self, new_name: str):
+        self._name = new_name
 
     def _get_name(self) -> str:
         """Get the name for display."""
         raise NotImplementedError('Get name not implemented')
-
-    def _get_op_name(self) -> str:
-        """Get the name for indexing."""
-        raise NotImplementedError('Get operation name not implemented')
 
     @property
     def dim(self) -> int:

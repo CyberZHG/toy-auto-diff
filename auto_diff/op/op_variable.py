@@ -44,9 +44,6 @@ class OpVariable(Operation):
     def _get_name(self) -> str:
         return 'W%s' % str(self.shape)
 
-    def _get_op_name(self) -> str:
-        return 'w_%d' % self._op_index
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Returns the contained weights."""
         return self.x

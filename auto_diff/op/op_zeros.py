@@ -18,11 +18,6 @@ class OpZeros(Operation):
             return 'zeros(%d)' % self.shape[0]
         return 'zeros%s' % str(self.shape)
 
-    def _get_op_name(self) -> str:
-        if len(self.shape) == 1:
-            return 'zeros(%d)' % self.shape[0]
-        return 'zeros%s' % str(self.shape)
-
     def _forward(self, feed_dict: Mapping[Union[str, Operation], np.ndarray]) -> np.ndarray:
         """Generate and returns the constant."""
         return np.zeros(self.shape)

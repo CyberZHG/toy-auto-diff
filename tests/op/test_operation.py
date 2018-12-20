@@ -39,8 +39,6 @@ class TestOperation(TestCase):
             ad.Operation(shape=(1, 2))
         with self.assertRaises(NotImplementedError):
             ad.Operation(shape=(1, 2), name='test')
-        with self.assertRaises(NotImplementedError):
-            DummyOpWithoutOpName(shape=(1, 2))
 
     def test_forward_not_implemented(self):
         with self.assertRaises(NotImplementedError):

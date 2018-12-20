@@ -63,11 +63,6 @@ class OpTranspose(Operation):
             return 'transpose(%s)' % self.inputs[0].name
         return 'transpose(%s, axes=%s)' % (self.inputs[0].name, str(self.axes))
 
-    def _get_op_name(self) -> str:
-        if self.axes is None:
-            return 'transpose(%s)' % self.inputs[0]._op_name
-        return 'transpose(%s, axes=%s)' % (self.inputs[0]._op_name, str(self.axes))
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Transpose the tensor."""
         return np.transpose(self.inputs[0].forward(feed_dict), axes=self.axes)

@@ -25,9 +25,6 @@ class OpConstant(Operation):
             return str(self.x)
         return 'C%s' % str(self.x.shape)
 
-    def _get_op_name(self) -> str:
-        return 'c_%d' % self._op_index
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Returns the constant."""
         return self.x

@@ -18,11 +18,6 @@ class OpOnes(Operation):
             return 'ones(%d)' % self.shape
         return 'ones%s' % str(self.shape)
 
-    def _get_op_name(self) -> str:
-        if isinstance(self.shape, int):
-            return 'ones(%d)' % self.shape
-        return 'ones%s' % str(self.shape)
-
     def _forward(self, feed_dict: Mapping[Union[str, Operation], np.ndarray]) -> np.ndarray:
         """Generate and returns the constant."""
         return np.ones(self.shape)

@@ -16,9 +16,6 @@ class OpSetitem(Operation):
     def _get_name(self) -> str:
         return 'setitem(%s, %s, %s)' % (self.inputs[0].name, str(self.key), self.inputs[1].name)
 
-    def _get_op_name(self) -> str:
-        return 'setitem(%s, %s, %s)' % (self.inputs[0]._op_name, str(self.key), self.inputs[1]._op_name)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         val = self.inputs[0].forward(feed_dict)
         val[self.key] = self.inputs[1].forward(feed_dict)

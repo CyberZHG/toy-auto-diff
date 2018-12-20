@@ -22,11 +22,6 @@ class OpExpandDims(Operation):
             return 'expand_dims(%s)' % self.inputs[0].name
         return 'expand_dims(%s, axis=%d)' % (self.inputs[0].name, self.axis)
 
-    def _get_op_name(self) -> str:
-        if self.axis == -1:
-            return 'expand_dims(%s)' % self.inputs[0]._op_name
-        return 'expand_dims(%s, axis=%d)' % (self.inputs[0]._op_name, self.axis)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Expand shape."""
         return np.expand_dims(self.inputs[0].forward(feed_dict), axis=self.axis)

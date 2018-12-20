@@ -23,11 +23,6 @@ class OpArgmax(Operation):
             return 'argmax(%s)' % self.inputs[0].name
         return 'argmax(%s, axis=%d)' % (self.inputs[0].name, self.axis)
 
-    def _get_op_name(self) -> str:
-        if self.axis is None:
-            return 'argmax(%s)' % self.inputs[0]._op_name
-        return 'argmax(%s, axis=%d)' % (self.inputs[0]._op_name, self.axis)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         return np.argmax(self.inputs[0].forward(feed_dict), axis=self.axis)
 
