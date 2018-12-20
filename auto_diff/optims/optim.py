@@ -8,4 +8,4 @@ class Optimizer(object):
         pass
 
     def update(self, weights: List[ad.OpVariable], session: ad.Session, feed_dict):
-        pass
+        raise NotImplementedError('Optimizer not implemented.')
