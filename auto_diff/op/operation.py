@@ -9,7 +9,9 @@ class Operation(object):
     __op_counter = [0]
 
     #: The key for extracting step information from session.
-    STEP_KEY = '__step__'
+    KEY_STEP = '__step__'
+    #: The key that indicates whether it is training.
+    KEY_TRAINING = '__training__'
 
     def __init__(self, **kwargs):
         if not hasattr(self, 'name'):
@@ -21,7 +23,9 @@ class Operation(object):
             raise NotImplementedError('Shape not defined')
         if not hasattr(self, 'inputs'):
             self.inputs: Sequence['Operation'] = []
-        self.gradient: Optional['Operation'] = None
+        if not hasattr(self, 'params'):
+            self.params: dict = {}
+        self.gradients: Optional['Operation'] = None
         self._op_index = self.__op_counter[0]
         self.__op_counter[0] += 1
         self._last_step = -1
@@ -31,15 +35,21 @@ class Operation(object):
     def name(self) -> str:
         if self._name is not None:
             return self._name
-        return self._get_name()
+        class_name = self.__class__.__name__[2:]
+        func_name = ''
+        for c in class_name:
+            if c.isupper():
+                if func_name:
+                    func_name += '_'
+                c = c.lower()
+            func_name += c
+        args = [str(inp) for inp in self.inputs] +\
+               ['%s=%s' % (str(key), str(value)) for key, value in self.params.items() if value is not None]
+        return func_name + '(%s)' % ', '.join(args)
 
     @name.setter
     def name(self, new_name: str):
         self._name = new_name
-
-    def _get_name(self) -> str:
-        """Get the name for display."""
-        raise NotImplementedError('Get name not implemented')
 
     @property
     def dim(self) -> int:
@@ -56,11 +66,11 @@ class Operation(object):
         """
         if feed_dict is None:
             feed_dict = {}
-        if self.STEP_KEY in feed_dict and feed_dict[self.STEP_KEY] == self._last_step:
+        if self.KEY_STEP in feed_dict and feed_dict[self.KEY_STEP] == self._last_step:
             return self._last_forward
         output = self._forward(feed_dict)
-        if self.STEP_KEY in feed_dict:
-            self._last_step = feed_dict[self.STEP_KEY]
+        if self.KEY_STEP in feed_dict:
+            self._last_step = feed_dict[self.KEY_STEP]
             self._last_forward = output
         return output
 
@@ -69,7 +79,7 @@ class Operation(object):
         raise NotImplementedError('Forward operation not implemented')
 
     def clear_gradient(self):
-        self.gradient = None
+        self.gradients = None
 
     def backward(self, gradient: 'Operation' = None) -> None:
         """Update gradients recursively.
@@ -80,6 +90,8 @@ class Operation(object):
             from .op_ones_like import OpOnesLike
             gradient = OpOnesLike(self)
         self._backward(gradient)
+        for i in range(len(self.inputs)):
+            self.inputs[i].backward(self.gradients[i])
 
     def _backward(self, gradient: 'Operation') -> None:
         """Backward operation to be implemented."""

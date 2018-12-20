@@ -15,20 +15,16 @@ class OpSum(OpKeepdims):
                  **kwargs):
         super(OpSum, self).__init__(self.__class__, x, axis, keepdims, **kwargs)
 
-    def _get_name(self) -> str:
-        return 'sum' + self._get_args_str(self.inputs[0].name)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Sum over axis"""
-        if not self.keepdims:
+        if not self.params['keepdims']:
             return self.inputs[0].forward(feed_dict)
-        return np.sum(self.inputs[0].forward(feed_dict), axis=self.axis, keepdims=True)
+        return np.sum(self.inputs[0].forward(feed_dict), axis=self.params['axis'], keepdims=True)
 
     def _backward(self, gradient: Operation) -> None:
         """Expand the dimensions of the gradient."""
         from .op_ones_like import OpOnesLike
-        if not self.keepdims:
-            self.inputs[0].backward(gradient)
+        if not self.params['keepdims']:
+            self.gradients = [gradient]
             return
-        self.gradient = OpOnesLike(self.inputs[0]) * gradient
-        self.inputs[0].backward(self.gradient)
+        self.gradients = [OpOnesLike(self.inputs[0]) * gradient]

@@ -17,8 +17,3 @@ class TestOpOnesLike(NumGradCheck):
         w = ad.array([[1, 2, 3], [4, 5, 6]])
         ones = ad.ones_like(w).transpose()
         self.numeric_gradient_check(ones, {}, [])
-
-    def test_name(self):
-        w = ad.array([[1, 2, 3], [4, 5, 6]], name='W')
-        ones = ad.ones_like(w).transpose()
-        self.assertEqual('transpose(ones_like(W))', ones.__unicode__())

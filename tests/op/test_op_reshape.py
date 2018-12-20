@@ -28,8 +28,3 @@ class TestOpReshape(NumGradCheck):
         w = ad.variable(val)
         wr = ad.reshape(w, shape=(1, 2, 3))
         self.numeric_gradient_check(wr, {}, [w])
-
-    def test_name(self):
-        val = np.arange(6)
-        wr = ad.variable(val).reshape(shape=(1, 2, 3))
-        self.assertEqual('reshape(W(6,), shape=(1, 2, 3))', wr.__unicode__())

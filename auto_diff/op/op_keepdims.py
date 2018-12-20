@@ -1,7 +1,5 @@
-from typing import Mapping, Union, Optional, Sequence
-import numpy as np
+from typing import Union, Optional, Sequence
 from .operation import Operation
-from .op_placeholder import OpPlaceholder
 
 
 class OpKeepdims(Operation):
@@ -14,8 +12,10 @@ class OpKeepdims(Operation):
                  keepdims: bool = False,
                  **kwargs):
         self.inputs = [x]
-        self.axis = axis
-        self.keepdims = keepdims
+        self.params = {
+            'axis': axis,
+            'keepdims': keepdims,
+        }
         if axis is None:
             if keepdims:
                 self.shape = tuple([1] * x.dim)
@@ -35,16 +35,8 @@ class OpKeepdims(Operation):
             self.shape = tuple(shape)
 
         if x.isscalar():
-            self.keepdims = False
-        elif not self.keepdims:
-            self.inputs[0] = base_op(self.inputs[0], axis=self.axis, keepdims=True).\
+            self.params['keepdims'] = False
+        elif not keepdims:
+            self.inputs[0] = base_op(self.inputs[0], axis=self.params['axis'], keepdims=True).\
                 squeeze(axis=axis, name=self.inputs[0].name)
         super(OpKeepdims, self).__init__(**kwargs)
-
-    def _get_args_str(self, name):
-        args = [name]
-        if self.axis is not None:
-            args.append('axis=%s' % str(self.axis))
-        if self.keepdims:
-            args.append('keepdims=%s' % str(self.keepdims))
-        return '(' + ', '.join(args) + ')'

@@ -17,8 +17,3 @@ class TestOpZerosLike(NumGradCheck):
         w = ad.array([[1, 2, 3], [4, 5, 6]])
         zeros = ad.zeros_like(w).transpose()
         self.numeric_gradient_check(zeros, {}, [])
-
-    def test_name(self):
-        w = ad.array([[1, 2, 3], [4, 5, 6]], name='W')
-        zeros = ad.zeros_like(w).transpose()
-        self.assertEqual('transpose(zeros_like(W))', zeros.__unicode__())

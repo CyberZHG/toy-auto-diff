@@ -19,9 +19,3 @@ class TestOpTanh(NumGradCheck):
         x = ad.variable(x_val)
         y = ad.tanh(x)
         self.numeric_gradient_check(y, {}, [x])
-
-    def test_name(self):
-        x_val = np.random.random((3, 4))
-        x = ad.variable(x_val, name='X')
-        y = ad.tanh(x)
-        self.assertEqual('tanh(X)', y.__unicode__())

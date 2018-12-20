@@ -11,10 +11,10 @@ class OpSetitem(Operation):
         self.inputs = [x, value]
         self.key = key
         self.shape = x.shape
+        self.params = {
+            'key': key,
+        }
         super(OpSetitem, self).__init__(**kwargs)
-
-    def _get_name(self) -> str:
-        return 'setitem(%s, %s, %s)' % (self.inputs[0].name, str(self.key), self.inputs[1].name)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         val = self.inputs[0].forward(feed_dict)

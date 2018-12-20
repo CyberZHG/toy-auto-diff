@@ -24,7 +24,3 @@ class TestOpMinimum(NumGradCheck):
     def test_backward(self):
         z, variables, _ = self._gen_random_and_result((3, 4), (3, 1))
         self.numeric_gradient_check(z, {}, variables)
-
-    def test_name(self):
-        z, _, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
-        self.assertEqual('minimum(X(1, 3, 1, 4), Y(5, 1))', z.__unicode__())

@@ -11,11 +11,11 @@ class OpPlaceholder(Operation):
         :param shape: Shape of the value.
         :param kwargs:
         """
+        self.params = {
+            'shape': shape,
+        }
         self.shape = tuple(shape)
         super(OpPlaceholder, self).__init__(**kwargs)
-
-    def _get_name(self) -> str:
-        return 'X%s' % str(self.shape)
 
     def _forward(self, feed_dict: Mapping[Union[str, 'OpPlaceholder'], np.ndarray]):
         """Finds and returns the value in feed dictionary."""

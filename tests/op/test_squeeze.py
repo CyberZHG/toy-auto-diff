@@ -53,13 +53,3 @@ class TestOpSqueeze(NumGradCheck):
         self.numeric_gradient_check(we, {}, [w])
         we = w.squeeze(axis=(1, 2, 4))
         self.numeric_gradient_check(we, {}, [w])
-
-    def test_name(self):
-        val = np.ones((2, 1, 1, 3, 1))
-        w = ad.variable(val)
-        we = w.squeeze()
-        self.assertEqual('squeeze(W(2, 1, 1, 3, 1))', we.__unicode__())
-        we = w.squeeze(axis=1)
-        self.assertEqual('squeeze(W(2, 1, 1, 3, 1), axis=1)', we.__unicode__())
-        we = w.squeeze(axis=(1, -1, 2))
-        self.assertEqual('squeeze(W(2, 1, 1, 3, 1), axis=(1, -1, 2))', we.__unicode__())

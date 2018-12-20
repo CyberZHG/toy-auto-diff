@@ -9,7 +9,9 @@ class OpArgmax(Operation):
 
     def __init__(self, x: Operation, axis: Optional[int] = None, **kwargs):
         self.inputs = [x]
-        self.axis = axis
+        self.params = {
+            'axis': axis,
+        }
         if axis is None:
             self.shape = ()
         else:
@@ -18,13 +20,8 @@ class OpArgmax(Operation):
             self.shape = tuple(shape)
         super(OpArgmax, self).__init__(**kwargs)
 
-    def _get_name(self) -> str:
-        if self.axis is None:
-            return 'argmax(%s)' % self.inputs[0].name
-        return 'argmax(%s, axis=%d)' % (self.inputs[0].name, self.axis)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return np.argmax(self.inputs[0].forward(feed_dict), axis=self.axis)
+        return np.argmax(self.inputs[0].forward(feed_dict), axis=self.params['axis'])
 
     def _backward(self, gradient: Operation) -> None:
         raise NotImplementedError('`argmax` is not differentiable')

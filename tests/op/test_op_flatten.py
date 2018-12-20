@@ -18,8 +18,3 @@ class TestOpFlatten(NumGradCheck):
         w = ad.variable(val)
         wf = ad.flatten(w)
         self.numeric_gradient_check(wf, {}, [w])
-
-    def test_name(self):
-        val = np.arange(6).reshape((1, 2, 3))
-        wf = ad.variable(val).flatten()
-        self.assertEqual('flatten(W(1, 2, 3))', wf.__unicode__())

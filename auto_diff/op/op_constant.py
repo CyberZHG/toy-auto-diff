@@ -18,12 +18,16 @@ class OpConstant(Operation):
         else:
             self.x = np.array(x, dtype=np.float64)
             self.shape = self.x.shape
+            self.params = {
+                'shape': self.shape,
+            }
         super(OpConstant, self).__init__(**kwargs)
 
-    def _get_name(self) -> str:
+    @property
+    def name(self) -> str:
         if np.isscalar(self.x):
             return str(self.x)
-        return 'C%s' % str(self.x.shape)
+        return super(OpConstant, self).name
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Returns the constant."""

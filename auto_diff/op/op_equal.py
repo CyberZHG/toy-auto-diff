@@ -12,9 +12,6 @@ class OpEqual(Operation):
         self._broadcast_shape(x, y)
         super(OpEqual, self).__init__(**kwargs)
 
-    def _get_name(self) -> str:
-        return 'equal(%s, %s)' % (self.inputs[0].name, self.inputs[1].name)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         return (self.inputs[0].forward(feed_dict) == self.inputs[1].forward(feed_dict)).astype(dtype=np.float64)
 

@@ -47,7 +47,9 @@ class OpTranspose(Operation):
         :param kwargs: Arguments for parent.
         """
         self.inputs = [x]
-        self.axes = axes
+        self.params = {
+            'axes': axes,
+        }
         if axes is None:
             self.inverse_axes = None
             self.shape = tuple(reversed(x.shape))
@@ -58,16 +60,10 @@ class OpTranspose(Operation):
             self.shape = tuple(x.shape[axis] for axis in axes)
         super(OpTranspose, self).__init__(**kwargs)
 
-    def _get_name(self) -> str:
-        if self.axes is None:
-            return 'transpose(%s)' % self.inputs[0].name
-        return 'transpose(%s, axes=%s)' % (self.inputs[0].name, str(self.axes))
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Transpose the tensor."""
-        return np.transpose(self.inputs[0].forward(feed_dict), axes=self.axes)
+        return np.transpose(self.inputs[0].forward(feed_dict), axes=self.params['axes'])
 
     def _backward(self, gradient: Operation) -> None:
         """Transpose the gradients to its old shape."""
-        self.gradient = gradient.transpose(axes=self.inverse_axes)
-        self.inputs[0].backward(self.gradient)
+        self.gradients = [gradient.transpose(axes=self.inverse_axes)]

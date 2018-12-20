@@ -8,6 +8,3 @@ class OpFlatten(OpReshape):
 
     def __init__(self, x: Operation, **kwargs):
         super(OpFlatten, self).__init__(x, shape=(int(np.prod(x.shape)),), **kwargs)
-
-    def _get_name(self) -> str:
-        return 'flatten(%s)' % self.inputs[0].name

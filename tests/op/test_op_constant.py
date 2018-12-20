@@ -16,5 +16,5 @@ class TestOpConstant(TestCase):
 
     def test_name(self):
         self.assertEqual('0.0', str(ad.array(0)))
-        self.assertEqual('C(1,)', ad.array([1.0]).__str__())
-        self.assertEqual('C(1, 1)', ad.array([[1.0]]).__unicode__())
+        self.assertEqual('constant(shape=(1,))', ad.array([1.0]).__str__())
+        self.assertEqual('constant(shape=(1, 1))', ad.array([[1.0]]).__unicode__())

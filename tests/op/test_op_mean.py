@@ -88,27 +88,3 @@ class TestOpMean(NumGradCheck):
         self.numeric_gradient_check(y, {}, [w])
         y = w.transpose().mean(axis=(0, 2), keepdims=True).mean(axis=1, keepdims=True)
         self.numeric_gradient_check(y, {}, [w])
-
-    def test_name(self):
-        val = np.random.random((3, 5))
-        w = ad.array(val, name='W')
-        y = w.transpose().mean()
-        self.assertEqual('mean(transpose(W))', y.__unicode__())
-        y = w.transpose().mean(axis=-1)
-        self.assertEqual('mean(transpose(W), axis=-1)', y.__unicode__())
-        y = w.transpose().mean(axis=0)
-        self.assertEqual('mean(transpose(W), axis=0)', y.__unicode__())
-        y = w.transpose().mean(axis=(0, -1))
-        self.assertEqual('mean(transpose(W), axis=(0, -1))', y.__unicode__())
-
-    def test_name_keepdims(self):
-        val = np.random.random((3, 5))
-        w = ad.array(val, name='W')
-        y = ad.mean(w.transpose(), keepdims=True)
-        self.assertEqual('mean(transpose(W), keepdims=True)', y.__unicode__())
-        y = w.transpose().mean(axis=-1, keepdims=True)
-        self.assertEqual('mean(transpose(W), axis=-1, keepdims=True)', y.__unicode__())
-        y = w.transpose().mean(axis=0, keepdims=True)
-        self.assertEqual('mean(transpose(W), axis=0, keepdims=True)', y.__unicode__())
-        y = w.transpose().mean(axis=(0, -1), keepdims=True)
-        self.assertEqual('mean(transpose(W), axis=(0, -1), keepdims=True)', y.__unicode__())

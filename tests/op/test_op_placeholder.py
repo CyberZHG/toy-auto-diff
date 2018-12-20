@@ -18,8 +18,3 @@ class TestOpPlaceholder(TestCase):
 
     def test_backward(self):
         ad.placeholder(shape=(2, 3)).backward()
-
-    def test_name(self):
-        self.assertEqual('X(3, 1, 2)', str(ad.placeholder(shape=(3, 1, 2))))
-        self.assertEqual('X(1,)', ad.placeholder(shape=(1,)).__str__())
-        self.assertEqual('X(1, 1)', ad.placeholder(shape=(1, 1)).__unicode__())

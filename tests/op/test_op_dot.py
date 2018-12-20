@@ -108,7 +108,3 @@ class TestOpDot(NumGradCheck):
         self.numeric_gradient_check(z, {}, variables)
         z, variables, _ = self._gen_random_and_result((3, 4), (5, 6, 4, 7))
         self.numeric_gradient_check(z, {}, variables)
-
-    def test_name(self):
-        z, _, _ = self._gen_random_and_result((3, 4), (4, 5))
-        self.assertEqual('dot(X(3, 4), Y(4, 5))', z.__unicode__())

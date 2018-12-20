@@ -17,7 +17,7 @@ class Session(object):
     def run(self, fetches: Union[Operation, List[Operation], Mapping[str, Operation]], feed_dict=None):
         if feed_dict is None:
             feed_dict = {}
-        feed_dict[Operation.STEP_KEY] = self.__step[0]
+        feed_dict[Operation.KEY_STEP] = self.__step[0]
         if isinstance(fetches, Operation):
             return fetches.forward(feed_dict)
         if isinstance(fetches, list):

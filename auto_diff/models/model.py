@@ -90,7 +90,7 @@ class Model(ad.layers.Layer):
                      x: Union[np.ndarray, List[np.ndarray]],
                      y: Union[np.ndarray, List[np.ndarray]]):
         # TODO: Multiple outputs
-        feed_dict = {}
+        feed_dict = {ad.Operation.KEY_TRAINING: True}
         if isinstance(x, list):
             for i, input_val in enumerate(x):
                 feed_dict[self._inputs[i].placeholder] = input_val
@@ -101,7 +101,7 @@ class Model(ad.layers.Layer):
         self._optimizer.update(self.trainable_weights, self._session, feed_dict)
 
     def predict_on_batch(self, x: Union[np.ndarray, List[np.ndarray]]) -> Union[np.ndarray, List[np.ndarray]]:
-        feed_dict = {}
+        feed_dict = {ad.Operation.KEY_TRAINING: False}
         if isinstance(x, list):
             for i, input_val in enumerate(x):
                 feed_dict[self._inputs[i].placeholder] = input_val

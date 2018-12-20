@@ -12,12 +12,8 @@ class OpLog(Operation):
         self.shape = x.shape
         super(OpLog, self).__init__(**kwargs)
 
-    def _get_name(self) -> str:
-        return 'log(%s)' % self.inputs[0].name
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         return np.log(self.inputs[0].forward(feed_dict))
 
     def _backward(self, gradient: Operation) -> None:
-        self.gradient = gradient / self.inputs[0]
-        self.inputs[0].backward(self.gradient)
+        self.gradients = [gradient / self.inputs[0]]

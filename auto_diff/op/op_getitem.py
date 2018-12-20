@@ -9,7 +9,9 @@ class OpGetitem(Operation):
 
     def __init__(self, x: Operation, item, **kwargs):
         self.inputs = [x]
-        self.item = item
+        self.params = {
+            'item': item,
+        }
         shape = []
         if isinstance(item, int):
             item = (item,)
@@ -22,31 +24,10 @@ class OpGetitem(Operation):
         self.shape = tuple(shape) + x.shape[len(item):]
         super(OpGetitem, self).__init__(**kwargs)
 
-    def _get_name(self) -> str:
-        slice_str = []
-        if isinstance(self.item, int):
-            slice_str = [str(self.item)]
-        else:
-            for s in self.item:
-                if isinstance(s, slice):
-                    part = ''
-                    if s.start is not None:
-                        part += str(s.start)
-                    part += ':'
-                    if s.stop is not None:
-                        part += str(s.stop)
-                    if s.step is not None:
-                        part += ':' + str(s.step)
-                    slice_str.append(part)
-                else:
-                    slice_str.append(str(s))
-        return '%s[%s]' % (self.inputs[0].name, ', '.join(slice_str))
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return self.inputs[0].forward(feed_dict)[self.item]
+        return self.inputs[0].forward(feed_dict)[self.params['item']]
 
     def _backward(self, gradient: Operation) -> None:
         from .op_zeros_like import OpZerosLike
         from .op_setitem import OpSetitem
-        self.gradient = OpSetitem(OpZerosLike(self.inputs[0]), self.item, gradient)
-        self.inputs[0].backward(self.gradient)
+        self.gradients = [OpSetitem(OpZerosLike(self.inputs[0]), self.params['item'], gradient)]

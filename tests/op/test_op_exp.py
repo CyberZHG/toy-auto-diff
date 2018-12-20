@@ -19,9 +19,3 @@ class TestOpExp(NumGradCheck):
         x = ad.variable(x_val)
         y = ad.exp(x)
         self.numeric_gradient_check(y, {}, [x])
-
-    def test_name(self):
-        x_val = np.random.random((3, 4))
-        x = ad.variable(x_val, name='X')
-        y = ad.exp(x)
-        self.assertEqual('exp(X)', y.__unicode__())

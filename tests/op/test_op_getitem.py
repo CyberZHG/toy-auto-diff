@@ -63,11 +63,3 @@ class TestOpGetItem(NumGradCheck):
         self.numeric_gradient_check(y, {}, [x])
         y = x[0, :-2:-1, ::-2]
         self.numeric_gradient_check(y, {}, [x])
-
-    def test_name(self):
-        val = np.random.random((1, 2, 3))
-        x = ad.variable(val)
-        y = x[0, 1:, :-1:-1]
-        self.assertEqual('W(1, 2, 3)[0, 1:, :-1:-1]', y.__unicode__())
-        y = x[0, :, -2:]
-        self.assertEqual('W(1, 2, 3)[0, :, -2:]', y.__unicode__())

@@ -19,9 +19,3 @@ class TestOpLog(NumGradCheck):
         x = ad.variable(x_val)
         y = ad.log(x)
         self.numeric_gradient_check(y, {}, [x])
-
-    def test_name(self):
-        x_val = np.random.random((3, 4))
-        x = ad.variable(x_val, name='X')
-        y = ad.log(x)
-        self.assertEqual('log(X)', y.__unicode__())

@@ -55,18 +55,6 @@ class TestOpAdd(NumGradCheck):
         z, variables, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
         self.numeric_gradient_check(z, {}, variables)
 
-    def test_name(self):
-        z, _, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
-        self.assertEqual('add(X(1, 3, 1, 4), Y(5, 1))', z.__unicode__())
-        x = ad.placeholder(shape=(3, 4), name='X')
-        y = ad.placeholder(shape=(1, 1), name='Y')
-        z = ad.add(x, y)
-        self.assertEqual('add(X, Y)', z.__unicode__())
-        z = x + 1.0
-        self.assertEqual('add(X, 1.0)', z.__unicode__())
-        z = 1.0 + y
-        self.assertEqual('add(1.0, Y)', z.__unicode__())
-
     def test_broadcast_failed(self):
         with self.assertRaises(ValueError):
             self._gen_random_and_result((1, 3, 4), (1, 4, 1))

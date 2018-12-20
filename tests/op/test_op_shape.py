@@ -15,14 +15,7 @@ class TestOpShape(NumGradCheck):
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
 
     def test_backward(self):
-        with self.assertRaises(NotImplementedError):
-            x_val = np.random.random((3, 4))
-            x = ad.variable(x_val)
-            y = ad.shape(x)
-            self.numeric_gradient_check(y, {}, [x])
-
-    def test_name(self):
         x_val = np.random.random((3, 4))
-        x = ad.variable(x_val, name='X')
+        x = ad.variable(x_val)
         y = ad.shape(x)
-        self.assertEqual('shape(X)', y.__unicode__())
+        self.numeric_gradient_check(y, {}, [x])

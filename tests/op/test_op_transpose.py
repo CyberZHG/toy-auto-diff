@@ -32,11 +32,3 @@ class TestOpTranspose(NumGradCheck):
         w = ad.variable(val)
         wt = w.transpose(axes=(1, 0, 2))
         self.numeric_gradient_check(wt, {}, [w])
-
-    def test_name(self):
-        val = np.array([[1, 2, 3], [4, 5, 6]])
-        wt = ad.variable(val).transpose()
-        self.assertEqual('transpose(W(2, 3))', wt.__unicode__())
-        val = np.arange(6).reshape((1, 2, 3))
-        wt = ad.variable(val).transpose(axes=(1, 0, 2))
-        self.assertEqual('transpose(W(1, 2, 3), axes=(1, 0, 2))', wt.__unicode__())

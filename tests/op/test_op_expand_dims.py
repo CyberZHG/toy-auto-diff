@@ -28,7 +28,5 @@ class TestOpExpandDims(NumGradCheck):
 
     def test_name(self):
         val = np.ones((2, 3))
-        we = ad.variable(val).expand_dims()
-        self.assertEqual('expand_dims(W(2, 3))', we.__unicode__())
-        we = we.expand_dims(axis=1)
-        self.assertEqual('expand_dims(expand_dims(W(2, 3)), axis=1)', we.__unicode__())
+        we = ad.variable(val, name='W').expand_dims()
+        self.assertEqual('expand_dims(W, axis=-1)', we.__unicode__())

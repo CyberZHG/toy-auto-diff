@@ -88,27 +88,3 @@ class TestOpSum(NumGradCheck):
         self.numeric_gradient_check(y, {}, [w])
         y = w.transpose().sum(axis=(0, 2), keepdims=True).sum(axis=1, keepdims=True)
         self.numeric_gradient_check(y, {}, [w])
-
-    def test_name(self):
-        val = np.random.random((3, 5))
-        w = ad.array(val, name='W')
-        y = w.transpose().sum()
-        self.assertEqual('sum(transpose(W))', y.__unicode__())
-        y = w.transpose().sum(axis=-1)
-        self.assertEqual('sum(transpose(W), axis=-1)', y.__unicode__())
-        y = w.transpose().sum(axis=0)
-        self.assertEqual('sum(transpose(W), axis=0)', y.__unicode__())
-        y = w.transpose().sum(axis=(0, -1))
-        self.assertEqual('sum(transpose(W), axis=(0, -1))', y.__unicode__())
-
-    def test_name_keepdims(self):
-        val = np.random.random((3, 5))
-        w = ad.array(val, name='W')
-        y = ad.sum(w.transpose(), keepdims=True)
-        self.assertEqual('sum(transpose(W), keepdims=True)', y.__unicode__())
-        y = w.transpose().sum(axis=-1, keepdims=True)
-        self.assertEqual('sum(transpose(W), axis=-1, keepdims=True)', y.__unicode__())
-        y = w.transpose().sum(axis=0, keepdims=True)
-        self.assertEqual('sum(transpose(W), axis=0, keepdims=True)', y.__unicode__())
-        y = w.transpose().sum(axis=(0, -1), keepdims=True)
-        self.assertEqual('sum(transpose(W), axis=(0, -1), keepdims=True)', y.__unicode__())

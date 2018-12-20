@@ -10,7 +10,7 @@ class TestOpZeros(NumGradCheck):
         actual = zeros.forward()
         self.zeros = np.zeros(5)
         expect = self.zeros
-        self.assertEqual((5,), zeros.shape)
+        self.assertEqual(5, zeros.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
         zeros = ad.zeros((3, 5)).transpose()
         actual = zeros.forward()
@@ -21,9 +21,3 @@ class TestOpZeros(NumGradCheck):
     def test_backward(self):
         zeros = ad.zeros((3, 5)).transpose()
         self.numeric_gradient_check(zeros, {}, [])
-
-    def test_name(self):
-        zeros = ad.zeros(5)
-        self.assertEqual('zeros(5)', zeros.__unicode__())
-        zeros = ad.zeros((3, 5)).transpose()
-        self.assertEqual('transpose(zeros(3, 5))', zeros.__unicode__())

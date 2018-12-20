@@ -18,10 +18,15 @@ class OpVariable(Operation):
             self.shape = shape
         elif np.isscalar(initializer):
             self.x = float(initializer)
-            self.shape = ()
+            shape = ()
         else:
             self.x = np.array(initializer, dtype=np.float64)
-            self.shape = self.x.shape
+            shape = self.x.shape
+        self.params = {
+            'shape': shape,
+        }
+        self.shape = shape
+        self.gradient = None
         super(OpVariable, self).__init__(**kwargs)
 
     def update(self, value: Union[int, float, list, np.ndarray]) -> None:
@@ -41,16 +46,14 @@ class OpVariable(Operation):
         self.update(value)
         self.x += old_value
 
-    def _get_name(self) -> str:
-        return 'W%s' % str(self.shape)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Returns the contained weights."""
         return self.x
 
     def _backward(self, gradient: Operation) -> None:
         """No backward operation needed."""
-        if self.gradient is None:
-            self.gradient = gradient
+        if self.gradients is None:
+            self.gradients = [gradient]
         else:
-            self.gradient += gradient
+            self.gradients[0] += gradient
+        self.gradient = self.gradients[0]

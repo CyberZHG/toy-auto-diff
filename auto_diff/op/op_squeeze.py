@@ -11,7 +11,9 @@ class OpSqueeze(Operation):
         self.inputs = [x]
         if axis is None:
             axis = -1
-        self.axis = axis
+        self.params = {
+            'axis': axis,
+        }
         try:
             self.backward_axis = list(sorted(set([(a + x.dim) % x.dim for a in axis])))
         except TypeError:
@@ -19,18 +21,12 @@ class OpSqueeze(Operation):
         self.shape = tuple(x.shape[i] for i in range(len(x.shape)) if i not in self.backward_axis)
         super(OpSqueeze, self).__init__(**kwargs)
 
-    def _get_name(self) -> str:
-        if self.axis == -1:
-            return 'squeeze(%s)' % self.inputs[0].name
-        return 'squeeze(%s, axis=%s)' % (self.inputs[0].name, str(self.axis))
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Squeeze the tensor."""
-        return self.inputs[0].forward(feed_dict).squeeze(axis=self.axis)
+        return self.inputs[0].forward(feed_dict).squeeze(axis=self.params['axis'])
 
     def _backward(self, gradient: Operation) -> None:
         """Expand the dimensions of the gradient."""
-        self.gradient = gradient
+        self.gradients = [gradient]
         for axis in self.backward_axis:
-            self.gradient = self.gradient.expand_dims(axis=axis)
-        self.inputs[0].backward(self.gradient)
+            self.gradients = [self.gradients[0].expand_dims(axis=axis)]

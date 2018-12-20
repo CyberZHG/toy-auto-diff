@@ -11,22 +11,18 @@ class OpExpandDims(Operation):
         self.inputs = [x]
         if axis is None:
             axis = -1
-        self.axis = axis
+        self.params = {
+            'axis': axis,
+        }
         if axis < 0:
             axis += len(x.shape) + 1
         self.shape = x.shape[:axis] + (1,) + x.shape[axis:]
         super(OpExpandDims, self).__init__(**kwargs)
 
-    def _get_name(self) -> str:
-        if self.axis == -1:
-            return 'expand_dims(%s)' % self.inputs[0].name
-        return 'expand_dims(%s, axis=%d)' % (self.inputs[0].name, self.axis)
-
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Expand shape."""
-        return np.expand_dims(self.inputs[0].forward(feed_dict), axis=self.axis)
+        return np.expand_dims(self.inputs[0].forward(feed_dict), axis=self.params['axis'])
 
     def _backward(self, gradient: Operation) -> None:
         """Squeeze the expanded dimension."""
-        self.gradient = gradient.squeeze(axis=self.axis)
-        self.inputs[0].backward(self.gradient)
+        self.gradients = [gradient.squeeze(axis=self.params['axis'])]

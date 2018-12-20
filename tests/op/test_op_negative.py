@@ -19,9 +19,3 @@ class TestOpNegative(NumGradCheck):
         x = ad.variable(x_val)
         y = -x
         self.numeric_gradient_check(y, {}, [x])
-
-    def test_name(self):
-        x_val = np.random.random((3, 4))
-        x = ad.variable(x_val, name='X')
-        y = ad.negative(x)
-        self.assertEqual('(-X)', y.__unicode__())

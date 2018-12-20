@@ -23,11 +23,6 @@ class TestOpVariable(NumGradCheck):
         w = ad.variable(np.random.random((2, 3)))
         self.numeric_gradient_check(w, {}, [w])
 
-    def test_name(self):
-        self.assertEqual('W(3, 1, 2)', str(ad.variable(np.random.random((3, 1, 2)))))
-        self.assertEqual('W()', ad.variable(2.0).__str__())
-        self.assertEqual('W(1, 1)', ad.variable([[2.0]]).__unicode__())
-
     def test_callable_initializer(self):
         w = ad.variable(initializer=lambda shape: np.ones(shape), shape=(2, 3))
         actual = w.forward()

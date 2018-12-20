@@ -34,7 +34,5 @@ class TestOpArgmax(NumGradCheck):
     def test_name(self):
         x_val = np.random.random((3, 4))
         x = ad.variable(x_val, name='X')
-        y = ad.argmax(x)
-        self.assertEqual('argmax(X)', y.__unicode__())
         y = ad.argmax(x, axis=-1)
         self.assertEqual('argmax(X, axis=-1)', y.__unicode__())
