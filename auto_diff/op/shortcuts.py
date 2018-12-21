@@ -8,7 +8,7 @@ __all__ = [
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
     'square', 'exp', 'log', 'tanh',
-    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal',
+    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'where',
     'maximum', 'minimum',
 ]
 
@@ -200,6 +200,12 @@ def equal(x: Operation, y: Operation, **kwargs) -> Operation:
     """See :class:`OpEqual`."""
     from .op_equal import OpEqual
     return OpEqual(x, y, **kwargs)
+
+
+def where(condition: Operation, x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpWhere`."""
+    from .op_where import OpWhere
+    return OpWhere(condition, x, y, **kwargs)
 
 
 def maximum(x: Operation, y: Operation, **kwargs) -> Operation:

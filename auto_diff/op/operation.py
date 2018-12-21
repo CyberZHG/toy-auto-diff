@@ -97,23 +97,27 @@ class Operation(object):
         """Backward operation to be implemented."""
         raise NotImplementedError('Backward operation not implemented')
 
-    def _broadcast_shape(self, x: 'Operation', y: 'Operation'):
-        if x.isscalar():
-            self.shape = y.shape
-            return
-        if y.isscalar():
-            self.shape = x.shape
-            return
-        min_dim = min(len(x.shape), len(y.shape))
-        shape = []
-        for i in range(1, min_dim + 1):
-            if x.shape[-i] is None or y.shape[-i] is None:
-                shape.append(None)
+    def _broadcast_shape(self, *args: Union[int, float, 'Operation']):
+        from .op_constant import OpConstant
+        self.shape = ()
+        for x in args:
+            if not isinstance(x, Operation):
+                x = OpConstant(x)
+            if self.isscalar():
+                self.shape = x.shape
                 continue
-            if x.shape[-i] != 1 and y.shape[-i] != 1 and x.shape[-i] != y.shape[-i]:
-                raise ValueError('Cannot broadcast with shape %s and %s' % (str(x.shape), str(y.shape)))
-            shape.append(max(x.shape[-i], y.shape[-i]))
-        self.shape = tuple(list(x.shape[:-min_dim]) + list(y.shape[:-min_dim]) + list(reversed(shape)))
+            if x.isscalar():
+                continue
+            min_dim = min(len(self.shape), len(x.shape))
+            shape = []
+            for i in range(1, min_dim + 1):
+                if self.shape[-i] is None or x.shape[-i] is None:
+                    shape.append(None)
+                    continue
+                if self.shape[-i] != 1 and x.shape[-i] != 1 and self.shape[-i] != x.shape[-i]:
+                    raise ValueError('Cannot broadcast with shape %s and %s' % (str(self.shape), str(x.shape)))
+                shape.append(max(self.shape[-i], x.shape[-i]))
+            self.shape = tuple(list(self.shape[:-min_dim]) + list(x.shape[:-min_dim]) + list(reversed(shape)))
 
     def _broadcast_backward(self, gradient: 'Operation'):
         if self.shape == gradient.shape:
