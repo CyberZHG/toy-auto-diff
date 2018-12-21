@@ -24,6 +24,14 @@ class TestOpWhere(NumGradCheck):
             self.assertEqual(expect.shape, z.shape)
             self.assertTrue(np.allclose(expect, actual), (expect, actual))
 
+    def test_forward_only_condition(self):
+        actual = ad.where(ad.equal(
+            ad.constant([[1, 2], [3, 4]]),
+            ad.constant([[2, 1], [3, 4]]),
+        )).forward()
+        expect = np.array([[0., 0.], [1., 1.]])
+        self.assertTrue(np.allclose(expect, actual), (expect, actual))
+
     def test_backward(self):
         for _ in range(10):
             z, variables, _ = self._gen_random_and_result((3, 1), (4,), (3, 4))

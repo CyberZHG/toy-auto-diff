@@ -4,7 +4,7 @@ from .operation import Operation
 
 __all__ = [
     'array', 'constant', 'placeholder', 'variable', 'setitem',
-    'ones', 'zeros', 'ones_like', 'zeros_like',
+    'ones', 'zeros', 'ones_like', 'zeros_like', 'random',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
     'square', 'exp', 'log', 'tanh',
@@ -44,6 +44,12 @@ def zeros_like(x: Operation, **kwargs) -> Operation:
     """See :class:`OpZerosLike`."""
     from .op_zeros_like import OpZerosLike
     return OpZerosLike(x, **kwargs)
+
+
+def random(shape: Union[int, Sequence[int]], **kwargs) -> Operation:
+    """See :class:`OpRandom`."""
+    from .op_random import OpRandom
+    return OpRandom(shape, **kwargs)
 
 
 def placeholder(shape: Sequence[int], **kwargs) -> Operation:
@@ -202,7 +208,7 @@ def equal(x: Operation, y: Operation, **kwargs) -> Operation:
     return OpEqual(x, y, **kwargs)
 
 
-def where(condition: Operation, x: Operation, y: Operation, **kwargs) -> Operation:
+def where(condition: Operation, x: Optional[Operation] = None, y: Optional[Operation] = None, **kwargs) -> Operation:
     """See :class:`OpWhere`."""
     from .op_where import OpWhere
     return OpWhere(condition, x, y, **kwargs)

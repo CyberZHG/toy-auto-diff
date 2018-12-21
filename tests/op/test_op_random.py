@@ -1,0 +1,18 @@
+import numpy as np
+import auto_diff as ad
+from .util import NumGradCheck
+
+
+class TestOpRandom(NumGradCheck):
+
+    def test_forward(self):
+        random = ad.random(5)
+        random.forward()
+        self.assertEqual(5, random.shape)
+        random = ad.random((3, 5)).transpose()
+        random.forward()
+        self.assertEqual((5, 3), random.shape)
+
+    def test_backward(self):
+        random = ad.random((3, 5)).transpose()
+        self.numeric_gradient_check(random, {}, [])

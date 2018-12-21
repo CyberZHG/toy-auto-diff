@@ -3,8 +3,8 @@ import numpy as np
 from .operation import Operation
 
 
-class OpOnes(Operation):
-    """Constant tensor filled with ones."""
+class OpRandom(Operation):
+    """Constant tensor filled with random values."""
 
     def __init__(self, shape: Union[int, Sequence[int]], **kwargs):
         self.params = {
@@ -13,11 +13,11 @@ class OpOnes(Operation):
         if not isinstance(shape, int):
             shape = tuple(shape)
         self.shape = shape
-        super(OpOnes, self).__init__(**kwargs)
+        super(OpRandom, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, Operation], np.ndarray]) -> np.ndarray:
         """Generate and returns the constant."""
-        return np.ones(self.shape)
+        return np.random.random(self.shape)
 
     def _backward(self, gradient: Operation) -> None:
         """No backward operation needed."""
