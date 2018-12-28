@@ -19,6 +19,6 @@ class OpOnes(Operation):
         """Generate and returns the constant."""
         return np.ones(self.shape)
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """No backward operation needed."""
         pass

@@ -30,4 +30,16 @@ class TestOpMapFn(NumGradCheck):
             self.assertTrue(np.allclose(expect[i], actual[i]), (i, expect[i], actual[i]))
 
     def test_backward(self):
-        pass
+        x = ad.variable([1, 2, 3, 4, 5, 6])
+        y = ad.map_fn(lambda x: x * x, x)
+        self.numeric_gradient_check(y, {}, [x])
+
+        x = ad.variable([1, 2, 3])
+        y = ad.variable([-1, 1, -1])
+        z = ad.map_fn(lambda x: x[0] * x[1], (x, y))
+        self.numeric_gradient_check(z, {}, [x, y])
+
+        x = ad.variable([1, 2, 3])
+        y = ad.map_fn(lambda x: (x, -x), x)
+        z = y[0] * y[1]
+        self.numeric_gradient_check(z, {}, [x])

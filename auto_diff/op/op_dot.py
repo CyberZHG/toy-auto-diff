@@ -106,47 +106,47 @@ class OpDot(Operation):
         super(OpDot, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return np.dot(self.inputs[0].forward(feed_dict), self.inputs[1].forward(feed_dict))
+        return np.dot(self.values[0], self.values[1])
 
     def _backward(self, gradient: Operation) -> None:
-        x, y = self.inputs
-        if x.isscalar():
+        x, y = self.values
+        if np.isscalar(x):
             self.gradients = [
-                (gradient * y).sum(),
+                np.sum(gradient * y),
                 gradient * x,
             ]
-        elif y.isscalar():
+        elif np.isscalar(y):
             self.gradients = [
                 gradient * y,
-                (gradient * x).sum(),
+                np.sum(gradient * x),
             ]
-        elif x.dim == 1 and y.dim == 1:
+        elif np.ndim(x) == 1 and np.ndim(y) == 1:
             self.gradients = [
                 gradient * y,
                 gradient * x,
             ]
-        elif x.dim == 2 and y.dim == 2:
+        elif np.ndim(x) == 2 and np.ndim(y) == 2:
             self.gradients = [
-                gradient.dot(y.transpose()),
-                x.transpose().dot(gradient),
+                np.dot(gradient, np.transpose(y)),
+                np.dot(np.transpose(x), gradient),
             ]
-        elif y.dim == 1:
+        elif np.ndim(y) == 1:
             self.gradients = [
-                gradient.expand_dims(axis=-1).dot(y.expand_dims(axis=0)),
-                (x * gradient.expand_dims(axis=-1)).sum(axis=tuple(range(x.dim - 1))),
+                np.dot(np.expand_dims(gradient, axis=-1), np.expand_dims(y, axis=0)),
+                np.sum(x * np.expand_dims(gradient, axis=-1), axis=tuple(range(np.ndim(x) - 1))),
             ]
         else:
             x_pre_shape, y_pre_shape = x.shape[:-1], y.shape[:-2]
             x_pre_dims = np.prod(x_pre_shape, dtype=np.int)
-            x_reshaped = x.reshape((-1, x.shape[-1]))
-            y_reshaped = y.reshape((-1, y.shape[-2], y.shape[-1])).transpose((1, 0, 2)).reshape((y.shape[-2], -1))
+            x_reshaped = np.reshape(x, (-1, x.shape[-1]))
+            y_reshaped = np.reshape(y, (-1, y.shape[-2], y.shape[-1])).transpose((1, 0, 2)).reshape((y.shape[-2], -1))
             g_reshaped = gradient.reshape((x_pre_dims, -1))
             self.gradients = [
-                OpDot(
+                np.dot(
                     g_reshaped,
                     y_reshaped.transpose()
                 ).reshape(x.shape),
-                OpDot(
+                np.dot(
                     x_reshaped.transpose(),
                     g_reshaped,
                 ).reshape((y.shape[-2], -1, y.shape[-1])).transpose((1, 0, 2)).reshape(y.shape),

@@ -21,8 +21,8 @@ class OpExpandDims(Operation):
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Expand shape."""
-        return np.expand_dims(self.inputs[0].forward(feed_dict), axis=self.params['axis'])
+        return np.expand_dims(self.values[0], axis=self.params['axis'])
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """Squeeze the expanded dimension."""
-        self.gradients = [gradient.squeeze(axis=self.params['axis'])]
+        self.gradients = [np.squeeze(gradient, axis=self.params['axis'])]

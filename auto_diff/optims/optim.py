@@ -7,5 +7,5 @@ class Optimizer(object):
     def __init__(self, **kwargs):
         pass
 
-    def update(self, weights: List[ad.OpVariable], session: ad.Session, feed_dict):
+    def update(self, weights: List[ad.OpVariable], session: ad.Session):
         raise NotImplementedError('Optimizer not implemented.')

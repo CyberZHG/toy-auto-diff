@@ -32,6 +32,10 @@ class TestOpAdd(NumGradCheck):
         actual = z.forward()
         self.assertEqual(expect.shape, z.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
+        z, _, expect = self._gen_random_and_result(None, (3, 4))
+        actual = z.forward()
+        self.assertEqual(expect.shape, z.shape)
+        self.assertTrue(np.allclose(expect, actual), (expect, actual))
         z, _, expect = self._gen_random_and_result((3, 4), (4,))
         actual = z.forward()
         self.assertEqual(expect.shape, z.shape)
@@ -50,6 +54,8 @@ class TestOpAdd(NumGradCheck):
         self.numeric_gradient_check(z, {}, variables)
         z, variables, _ = self._gen_random_and_result((4,), (3, 4))
         self.numeric_gradient_check(z, {}, variables)
+        z, variables, _ = self._gen_random_and_result(None, (3, 4))
+        self.numeric_gradient_check(z, {}, variables)
         z, variables, _ = self._gen_random_and_result((3, 4), (4,))
         self.numeric_gradient_check(z, {}, variables)
         z, variables, _ = self._gen_random_and_result((1, 3, 1, 4), (5, 1))
@@ -58,3 +64,8 @@ class TestOpAdd(NumGradCheck):
     def test_broadcast_failed(self):
         with self.assertRaises(ValueError):
             self._gen_random_and_result((1, 3, 4), (1, 4, 1))
+        x = ad.variable(np.random.random((2, 3)), name='X')
+        z = 3.0 + x
+        self.numeric_gradient_check(z, {}, [x])
+        z = x + 3.0
+        self.numeric_gradient_check(z, {}, [x])

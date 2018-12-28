@@ -13,7 +13,7 @@ class OpEqual(Operation):
         super(OpEqual, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return (self.inputs[0].forward(feed_dict) == self.inputs[1].forward(feed_dict)).astype(dtype=np.float64)
+        return (self.values[0] == self.values[1]).astype(dtype=np.float64)
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         raise NotImplementedError('`equal` is not differentiable')

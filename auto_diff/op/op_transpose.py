@@ -62,8 +62,8 @@ class OpTranspose(Operation):
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Transpose the tensor."""
-        return np.transpose(self.inputs[0].forward(feed_dict), axes=self.params['axes'])
+        return np.transpose(self.values[0], axes=self.params['axes'])
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """Transpose the gradients to its old shape."""
-        self.gradients = [gradient.transpose(axes=self.inverse_axes)]
+        self.gradients = [np.transpose(gradient, axes=self.inverse_axes)]

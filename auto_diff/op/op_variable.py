@@ -46,14 +46,16 @@ class OpVariable(Operation):
         self.update(value)
         self.x += old_value
 
+    def clear_gradient(self):
+        self.gradient = None
+
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Returns the contained weights."""
         return self.x
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """No backward operation needed."""
-        if self.gradients is None:
-            self.gradients = [gradient]
-        else:
-            self.gradients[0] += gradient
+        if self.gradient is None:
+            self.gradients = [0.0]
+        self.gradients[0] += gradient
         self.gradient = self.gradients[0]

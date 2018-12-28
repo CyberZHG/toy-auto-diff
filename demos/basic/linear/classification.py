@@ -42,14 +42,9 @@ def gen_linear_model(config: dict, verbose=False):
     y_pred = ad.acts.softmax(ad.dot(v, w2) + b2)
 
     loss = ad.square(y - y_pred).mean()
-    loss.backward()
 
     if verbose:
         print('Loss:', loss)
-        print('Gradient for W1:', w1.gradient)
-        print('Gradient for b1:', b1.gradient)
-        print('Gradient for W2:', w2.gradient)
-        print('Gradient for b2:', b2.gradient)
 
     return y_pred, loss, [x, y], [w1, b1, w2, b2]
 
@@ -89,8 +84,10 @@ def train_model(loss: ad.Operation, placeholders: list, variables: list, config:
         feed_dict = {x: batch_x, y_true: batch_y}
         loss_val = sess.run(loss, feed_dict=feed_dict)
         for var in variables:
-            grad = sess.run(var.gradient, feed_dict=feed_dict)
-            var.update_add(-learning_rate * grad)
+            var.clear_gradient()
+        loss.backward()
+        for var in variables:
+            var.update_add(-learning_rate * var.gradient)
         if verbose:
             print('Step %d - Loss %.4f' % (step, loss_val), end='\r')
             if loss_val < 1e-4:

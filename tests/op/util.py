@@ -14,10 +14,11 @@ class NumGradCheck(TestCase):
         eps = 1e-8
         for variable in variables:
             variable.clear_gradient()
+        func.forward(feed_dict)
         func.backward()
         for variable in variables:
             values = variable.forward(feed_dict)
-            gradient = variable.gradient.forward(feed_dict)
+            gradient = variable.gradient
             if np.isscalar(values):
                 origin = values
                 variable.update(origin - eps)
@@ -45,8 +46,7 @@ class NumGradCheck(TestCase):
             self.assertTrue(np.alltrue(numeric_gradient - gradient < atol), '\n'.join(list(map(str, [
                 '',
                 '\tInput:\t\t' + str(variable),
-                '\tGradient:\t' + str(variable.gradient),
-                '\tShape:\t\t' + str(variable.gradient.shape),
+                '\tShape:\t\t' + str(np.shape(gradient)),
                 '\tNumerical:',
                 numeric_gradient,
                 '\tActual:',

@@ -13,8 +13,7 @@ class OpShape(Operation):
         super(OpShape, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return np.array(np.shape(self.inputs[0].forward(feed_dict)))
+        return np.array(np.shape(self.values[0]))
 
     def _backward(self, gradient: Operation) -> None:
-        import auto_diff as ad
-        self.gradients = [ad.zeros_like(self.inputs[0])]
+        self.gradients = [np.zeros_like(self.values[0])]

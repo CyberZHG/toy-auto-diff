@@ -46,5 +46,7 @@ class OpMapFn(Operation):
             result = result.reshape((self.fn_output_num, -1) + result.shape[1:])
         return result
 
-    def _backward(self, gradient: Operation) -> None:
-        pass
+    def _backward(self, gradient: np.ndarray) -> None:
+        if self.is_seq_output:
+            gradient = gradient.reshape((-1,) + np.shape(gradient)[2:])
+        self.gradients = [gradient[i] for i in range(np.shape(gradient)[0])]

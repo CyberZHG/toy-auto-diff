@@ -13,10 +13,10 @@ class OpSubtract(Operation):
         super(OpSubtract, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return self.inputs[0].forward(feed_dict) - self.inputs[1].forward(feed_dict)
+        return self.values[0] - self.values[1]
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         self.gradients = [
-            self.inputs[0]._broadcast_backward(gradient),
-            -self.inputs[1]._broadcast_backward(gradient),
+            self._broadcast_backward(gradient, np.shape(self.values[0])),
+            self._broadcast_backward(-gradient, np.shape(self.values[1])),
         ]

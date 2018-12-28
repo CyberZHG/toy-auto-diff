@@ -79,7 +79,6 @@ class Model(ad.layers.Layer):
                     output_placeholder = ad.OpPlaceholder(output_shapes)
                     self._output_placeholders = output_placeholder
                     self._loss = self._loss + losses(output_placeholder, self.outputs.outputs)
-        self._loss.backward()
 
         super(Model, self).build(None)
 
@@ -98,7 +97,11 @@ class Model(ad.layers.Layer):
             feed_dict[self._inputs.placeholder] = x
         feed_dict[self._output_placeholders] = y
         self._session.prepare()
-        self._optimizer.update(self.trainable_weights, self._session, feed_dict)
+        self._session.run(self._loss, feed_dict=feed_dict)
+        for weight in self.trainable_weights:
+            weight.clear_gradient()
+        self._loss.backward()
+        self._optimizer.update(self.trainable_weights, self._session)
 
     def predict_on_batch(self, x: Union[np.ndarray, List[np.ndarray]]) -> Union[np.ndarray, List[np.ndarray]]:
         feed_dict = {ad.Operation.KEY_TRAINING: False}

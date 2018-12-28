@@ -9,7 +9,6 @@ class SGD(Optimizer):
         self.lr = lr
         super(SGD, self).__init__(**kwargs)
 
-    def update(self, weights: List[ad.OpVariable], session: ad.Session, feed_dict):
+    def update(self, weights: List[ad.OpVariable], session: ad.Session):
         for weight in weights:
-            gradient = weight.gradient
-            weight.update_add(- self.lr * session.run(gradient, feed_dict=feed_dict))
+            weight.update_add(- self.lr * weight.gradient)

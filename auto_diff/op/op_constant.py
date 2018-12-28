@@ -33,6 +33,6 @@ class OpConstant(Operation):
         """Returns the constant."""
         return self.x
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """No backward operation needed."""
         pass

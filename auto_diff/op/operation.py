@@ -25,7 +25,9 @@ class Operation(object):
             self.inputs: Sequence['Operation'] = []
         if not hasattr(self, 'params'):
             self.params: dict = {}
-        self.gradients: Optional['Operation'] = None
+        self.values: Sequence[np.ndarray] = []
+        self.output: Operation[np.ndarray] = None
+        self.gradients: Optional[Sequence[np.ndarray]] = None
         self._op_index = self.__op_counter[0]
         self.__op_counter[0] += 1
         self._last_step = -1
@@ -68,32 +70,29 @@ class Operation(object):
             feed_dict = {}
         if self.KEY_STEP in feed_dict and feed_dict[self.KEY_STEP] == self._last_step:
             return self._last_forward
-        output = self._forward(feed_dict)
+        self.values = [inp.forward(feed_dict) for inp in self.inputs]
+        self.output = self._forward(feed_dict)
         if self.KEY_STEP in feed_dict:
             self._last_step = feed_dict[self.KEY_STEP]
-            self._last_forward = output
-        return output
+            self._last_forward = self.output
+        return self.output
 
     def _forward(self, feed_dict: Mapping[Union[str, 'Operation'], np.ndarray]) -> np.ndarray:
         """Forward operation to be implemented."""
         raise NotImplementedError('Forward operation not implemented')
 
-    def clear_gradient(self):
-        self.gradients = None
-
-    def backward(self, gradient: 'Operation' = None) -> None:
+    def backward(self, gradient: Optional[np.ndarray] = None) -> None:
         """Update gradients recursively.
 
         :param gradient: Current gradient.
         """
         if gradient is None:
-            from .op_ones_like import OpOnesLike
-            gradient = OpOnesLike(self)
+            gradient = np.ones_like(self.output)
         self._backward(gradient)
         for i in range(len(self.inputs)):
             self.inputs[i].backward(self.gradients[i])
 
-    def _backward(self, gradient: 'Operation') -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """Backward operation to be implemented."""
         raise NotImplementedError('Backward operation not implemented')
 
@@ -119,16 +118,18 @@ class Operation(object):
                 shape.append(max(self.shape[-i], x.shape[-i]))
             self.shape = tuple(list(self.shape[:-min_dim]) + list(x.shape[:-min_dim]) + list(reversed(shape)))
 
-    def _broadcast_backward(self, gradient: 'Operation'):
-        if self.shape == gradient.shape:
+    @staticmethod
+    def _broadcast_backward(gradient: np.ndarray, target_shape):
+        gradient_shape = np.shape(gradient)
+        if target_shape == gradient_shape:
             return gradient
-        if self.isscalar():
+        if target_shape == ():
             gradient = gradient.sum()
             return gradient
-        expand_dim = len(gradient.shape) - len(self.shape)
+        expand_dim = len(gradient_shape) - len(target_shape)
         axis = list(range(expand_dim))
-        for i, dim in enumerate(self.shape):
-            if self.shape[i] == 1 and (gradient.shape[i + expand_dim] is None or gradient.shape[i + expand_dim] > 1):
+        for i, dim in enumerate(target_shape):
+            if target_shape[i] == 1 and (gradient_shape[i + expand_dim] is None or gradient_shape[i + expand_dim] > 1):
                 axis.append(expand_dim + i)
         if len(axis) == 1:
             axis = axis[0]

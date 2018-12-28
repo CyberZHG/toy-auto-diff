@@ -17,12 +17,11 @@ class OpMax(OpKeepdims):
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         if not self.params['keepdims']:
-            return self.inputs[0].forward(feed_dict)
-        return np.max(self.inputs[0].forward(feed_dict), axis=self.params['axis'], keepdims=True)
+            return self.values[0]
+        return np.max(self.values[0], axis=self.params['axis'], keepdims=True)
 
-    def _backward(self, gradient: Operation) -> None:
-        import auto_diff as ad
+    def _backward(self, gradient: np.ndarray) -> None:
         if not self.params['keepdims']:
             self.gradients = [gradient]
             return
-        self.gradients = [ad.equal(self, self.inputs[0]) * gradient]
+        self.gradients = [np.equal(self.output, self.values[0]).astype(np.float64) * gradient]

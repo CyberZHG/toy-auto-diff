@@ -13,7 +13,7 @@ class OpSquare(Operation):
         super(OpSquare, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return np.square(self.inputs[0].forward(feed_dict))
+        return np.square(self.values[0])
 
     def _backward(self, gradient: Operation) -> None:
-        self.gradients = [2.0 * self.inputs[0] * gradient]
+        self.gradients = [2.0 * self.values[0] * gradient]

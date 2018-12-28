@@ -17,18 +17,16 @@ class OpWhere(Operation):
         self.params = {
             'condition': condition,
         }
+        self.output_condition = None
         self._broadcast_shape(condition, x, y)
         super(OpWhere, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return np.where(
-            self.params['condition'].forward(feed_dict).astype(np.bool),
-            self.inputs[0].forward(feed_dict),
-            self.inputs[1].forward(feed_dict),
-        )
+        self.output_condition = self.params['condition'].forward(feed_dict).astype(np.bool)
+        return np.where(self.output_condition, self.values[0], self.values[1])
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         self.gradients = [
-            self.inputs[0]._broadcast_backward(OpWhere(self.params['condition'], gradient, OpConstant(0.0))),
-            self.inputs[1]._broadcast_backward(OpWhere(self.params['condition'], OpConstant(0.0), gradient)),
+            self._broadcast_backward(np.where(self.output_condition, gradient, 0.0), np.shape(self.values[0])),
+            self._broadcast_backward(np.where(self.output_condition, 0.0, gradient), np.shape(self.values[1])),
         ]

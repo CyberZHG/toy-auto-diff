@@ -13,8 +13,7 @@ class OpTanh(Operation):
         super(OpTanh, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return np.tanh(self.inputs[0].forward(feed_dict))
+        return np.tanh(self.values[0])
 
-    def _backward(self, gradient: Operation) -> None:
-        import auto_diff as ad
-        self.gradients = [(1.0 - ad.square(self)) * gradient]
+    def _backward(self, gradient: np.ndarray) -> None:
+        self.gradients = [(1.0 - np.square(self.output)) * gradient]

@@ -23,10 +23,10 @@ class OpSqueeze(Operation):
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Squeeze the tensor."""
-        return self.inputs[0].forward(feed_dict).squeeze(axis=self.params['axis'])
+        return self.values[0].squeeze(axis=self.params['axis'])
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """Expand the dimensions of the gradient."""
         self.gradients = [gradient]
         for axis in self.backward_axis:
-            self.gradients = [self.gradients[0].expand_dims(axis=axis)]
+            self.gradients = [np.expand_dims(self.gradients[0], axis=axis)]

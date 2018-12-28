@@ -35,12 +35,9 @@ def gen_linear_model(config: dict, verbose=False):
 
     y_pred = ad.dot(x, w) + b
     loss = ad.square(y - y_pred).mean()
-    loss.backward()
 
     if verbose:
         print('Loss:', loss)
-        print('Gradient for W:', w.gradient)
-        print('Gradient for b:', b.gradient)
 
     return y_pred, loss, [x, y], [w, b]
 
@@ -78,8 +75,10 @@ def train_model(loss: ad.Operation, placeholders: list, variables: list, config:
         feed_dict = {x: batch_x, y: batch_y}
         loss_val = sess.run(loss, feed_dict=feed_dict)
         for var in variables:
-            grad = sess.run(var.gradient, feed_dict=feed_dict)
-            var.update_add(-learning_rate * grad)
+            var.clear_gradient()
+        loss.backward()
+        for var in variables:
+            var.update_add(-learning_rate * var.gradient)
         if verbose:
             print('Step %d - Loss %.4f' % (step, loss_val), end='\r')
             if loss_val < 1e-4:

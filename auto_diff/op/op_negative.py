@@ -13,7 +13,7 @@ class OpNegative(Operation):
         super(OpNegative, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return -self.inputs[0].forward(feed_dict)
+        return -self.values[0]
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         self.gradients = [-gradient]

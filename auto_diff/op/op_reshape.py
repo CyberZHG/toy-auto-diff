@@ -29,8 +29,8 @@ class OpReshape(Operation):
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Reshape the tensor."""
-        return np.reshape(self.inputs[0].forward(feed_dict), newshape=self.shape)
+        return np.reshape(self.values[0], newshape=self.shape)
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """Reshape the gradient to its old shape."""
-        self.gradients = [gradient.reshape(shape=self.old_shape)]
+        self.gradients = [np.reshape(gradient, self.old_shape)]

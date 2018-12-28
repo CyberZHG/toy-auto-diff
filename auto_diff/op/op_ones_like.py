@@ -13,9 +13,8 @@ class OpOnesLike(Operation):
 
     def _forward(self, feed_dict: Mapping[Union[str, Operation], np.ndarray]) -> np.ndarray:
         """Generate and returns the constant."""
-        return np.ones_like(self.inputs[0].forward(feed_dict))
+        return np.ones_like(self.values[0])
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """No backward operation needed."""
-        import auto_diff as ad
-        self.gradients = [ad.zeros_like(self)]
+        self.gradients = [np.zeros_like(self.output)]

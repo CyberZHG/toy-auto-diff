@@ -24,3 +24,8 @@ class TestOpSubtract(NumGradCheck):
     def test_backward(self):
         z, variables, _ = self._gen_random_and_result((4,), (3, 4))
         self.numeric_gradient_check(z, {}, variables)
+        x = ad.variable(np.random.random((2, 3)), name='X')
+        z = 1.0 - x
+        self.numeric_gradient_check(z, {}, [x])
+        z = x - 1.0
+        self.numeric_gradient_check(z, {}, [x])

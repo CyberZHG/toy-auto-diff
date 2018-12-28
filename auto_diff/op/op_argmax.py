@@ -21,7 +21,7 @@ class OpArgmax(Operation):
         super(OpArgmax, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return np.argmax(self.inputs[0].forward(feed_dict), axis=self.params['axis'])
+        return np.argmax(self.values[0], axis=self.params['axis'])
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         raise NotImplementedError('`argmax` is not differentiable')

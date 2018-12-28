@@ -13,7 +13,7 @@ class OpLog(Operation):
         super(OpLog, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return np.log(self.inputs[0].forward(feed_dict))
+        return np.log(self.values[0])
 
-    def _backward(self, gradient: Operation) -> None:
-        self.gradients = [gradient / self.inputs[0]]
+    def _backward(self, gradient: np.ndarray) -> None:
+        self.gradients = [gradient / self.values[0]]

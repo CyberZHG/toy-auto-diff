@@ -21,6 +21,6 @@ class OpPlaceholder(Operation):
         """Finds and returns the value in feed dictionary."""
         return feed_dict[self]
 
-    def _backward(self, gradient: Operation) -> None:
+    def _backward(self, gradient: np.ndarray) -> None:
         """No backward operation needed."""
         pass

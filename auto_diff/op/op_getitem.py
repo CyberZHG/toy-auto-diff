@@ -25,9 +25,9 @@ class OpGetitem(Operation):
         super(OpGetitem, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return self.inputs[0].forward(feed_dict)[self.params['item']]
+        return self.values[0][self.params['item']]
 
-    def _backward(self, gradient: Operation) -> None:
-        from .op_zeros_like import OpZerosLike
-        from .op_setitem import OpSetitem
-        self.gradients = [OpSetitem(OpZerosLike(self.inputs[0]), self.params['item'], gradient)]
+    def _backward(self, gradient: np.ndarray) -> None:
+        holder = np.zeros_like(self.values[0])
+        holder[self.params['item']] = gradient
+        self.gradients = [holder]

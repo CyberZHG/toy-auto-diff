@@ -13,11 +13,11 @@ class OpDivide(Operation):
         super(OpDivide, self).__init__(**kwargs)
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
-        return self.inputs[0].forward(feed_dict) / self.inputs[1].forward(feed_dict)
+        return self.values[0] / self.values[1]
 
-    def _backward(self, gradient: Operation) -> None:
-        from .op_square import OpSquare
+    def _backward(self, gradient: np.ndarray) -> None:
+        x, y = self.values
         self.gradients = [
-            self.inputs[0]._broadcast_backward(gradient / self.inputs[1]),
-            self.inputs[1]._broadcast_backward(- gradient * self.inputs[0] / OpSquare(self.inputs[1])),
+            self._broadcast_backward(gradient / y, np.shape(x)),
+            self._broadcast_backward(-gradient * x / np.square(y), np.shape(y)),
         ]
