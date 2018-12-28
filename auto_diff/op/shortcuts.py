@@ -10,6 +10,7 @@ __all__ = [
     'square', 'exp', 'log', 'tanh',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'where',
     'maximum', 'minimum',
+    'map_fn',
 ]
 
 
@@ -224,3 +225,9 @@ def minimum(x: Operation, y: Operation, **kwargs) -> Operation:
     """See :class:`OpMinimum`"""
     from .op_minimum import OpMinimum
     return OpMinimum(x, y, **kwargs)
+
+
+def map_fn(fn: Callable, elems: Union[Operation, Sequence[Operation]], **kwargs) -> Operation:
+    """See :class:`OpMapFn`"""
+    from .op_map_fn import OpMapFn
+    return OpMapFn(fn, elems, **kwargs)
