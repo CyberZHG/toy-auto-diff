@@ -14,7 +14,8 @@ class OpVariable(Operation):
         :param kwargs:
         """
         if callable(initializer):
-            self.x = initializer(shape)
+            self.x = None
+            self.initializer = initializer
             self.shape = shape
         elif np.isscalar(initializer):
             self.x = float(initializer)
@@ -51,6 +52,8 @@ class OpVariable(Operation):
 
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         """Returns the contained weights."""
+        if self.x is None:
+            self.x = self.initializer(self.shape)
         return self.x
 
     def _backward(self, gradient: np.ndarray) -> None:

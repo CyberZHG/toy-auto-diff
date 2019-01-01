@@ -16,13 +16,13 @@ class Dense(Layer):
             self.w = self.add_weight(
                 name='W',
                 shape=(input_shape[-1], self.output_dim),
-                initializer=np.random.random((input_shape[-1], self.output_dim)),
+                initializer=np.random.random,
                 trainable=True,
             )
             self.b = self.add_weight(
                 name='b',
                 shape=(self.output_dim,),
-                initializer=np.zeros((self.output_dim,)),
+                initializer=np.zeros,
                 trainable=True,
             )
         super(Dense, self).build(input_shape)

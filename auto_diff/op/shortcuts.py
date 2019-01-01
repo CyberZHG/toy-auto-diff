@@ -4,8 +4,8 @@ from .operation import Operation
 
 __all__ = [
     'array', 'constant', 'placeholder', 'variable', 'setitem',
-    'ones', 'zeros', 'ones_like', 'zeros_like', 'random',
-    'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape',
+    'ones', 'zeros', 'ones_like', 'zeros_like', 'random', 'arange',
+    'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape', 'pad',
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
     'square', 'exp', 'log', 'tanh',
     'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'where',
@@ -51,6 +51,15 @@ def random(shape: Union[int, Sequence[int]], **kwargs) -> Operation:
     """See :class:`OpRandom`."""
     from .op_random import OpRandom
     return OpRandom(shape, **kwargs)
+
+
+def arange(start: [Union[int, float, Operation]],
+           stop: Optional[Union[int, float, Operation]] = None,
+           step: Optional[Union[int, float, Operation]] = None,
+           **kwargs) -> Operation:
+    """See :class:`OpArange`."""
+    from .op_arange import OpArange
+    return OpArange(start, stop, step, **kwargs)
 
 
 def placeholder(shape: Sequence[int], **kwargs) -> Operation:
@@ -105,6 +114,12 @@ def shape(x: Operation, **kwargs) -> Operation:
     """See :class:`OpShape`."""
     from .op_shape import OpShape
     return OpShape(x, **kwargs)
+
+
+def pad(x: Operation, pad_width: Union[int, Sequence[int], Sequence[Sequence[int]]], **kwargs) -> Operation:
+    """See :class:`OpPad`."""
+    from .op_pad import OpPad
+    return OpPad(x, pad_width, **kwargs)
 
 
 def sum(x: Operation, axis: Optional[Union[int, Sequence[int]]] = None, keepdims: bool = False, **kwargs) -> Operation:
