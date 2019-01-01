@@ -1,7 +1,7 @@
 import auto_diff as ad
 
 
-__all__ = ['cross_entropy']
+__all__ = ['cross_entropy', 'mean_square_error']
 
 
 def cross_entropy(y_true: ad.Operation, y_pred: ad.Operation) -> ad.Operation:
@@ -15,3 +15,7 @@ def cross_entropy(y_true: ad.Operation, y_pred: ad.Operation) -> ad.Operation:
     :return: The result operation.
     """
     return ad.sum(-y_true * ad.log(y_pred), axis=-1)
+
+
+def mean_square_error(y_true: ad.Operation, y_pred: ad.Operation) -> ad.Operation:
+    return ad.sum(ad.square(y_true - y_pred), axis=-1)
