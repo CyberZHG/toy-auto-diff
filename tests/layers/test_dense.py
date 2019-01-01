@@ -17,7 +17,7 @@ class TestDense(TestCase):
         input_layer = ad.layers.Input(shape=(None, 5))
         dense_layer = ad.layers.Dense(output_dim=2, activation=ad.acts.softmax)(input_layer)
         model = ad.models.Model(inputs=input_layer, outputs=dense_layer)
-        model.build(optimizer=ad.optims.SGD(decay=1e-3, lr=1e-3), losses=ad.losses.cross_entropy)
+        model.build(optimizer=ad.optims.SGD(momentum=0.9, decay=1e-3, lr=1e-3), losses=ad.losses.cross_entropy)
 
         input_vals = np.random.random((2, 5))
         output_vals = np.array([[0.0, 1.0], [1.0, 0.0]])
