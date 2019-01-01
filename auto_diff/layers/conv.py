@@ -63,7 +63,11 @@ class Conv2D(Layer):
     def call(self, inputs, **kwargs):
         padded = ad.pad(inputs, ((0,), (self.pad_width[0],), (self.pad_width[1],), (0,)))
         batch_size = ad.shape(inputs)[0]
-        return ad.map_fn(lambda i: self.call_batch(padded, i), ad.arange(batch_size))
+        reshaped = ad.map_fn(lambda i: self.call_batch(padded, i), ad.arange(batch_size))
+        y = ad.dot(reshaped, self.w) + self.b
+        if self.activation is not None:
+            y = self.activation(y)
+        return y
 
     def call_batch(self, padded: ad.Operation, i: int):
         height = ad.shape(padded)[1]
@@ -82,7 +86,4 @@ class Conv2D(Layer):
             c * self.strides[1]:c * self.strides[1] + self.kernel_size[1],
             :,
         ]
-        y = ad.dot(block.flatten(), self.w) + self.b
-        if self.activation is not None:
-            y = self.activation(y)
-        return y
+        return block.flatten()
