@@ -20,20 +20,20 @@ class LSTM(Layer):
         if not self._built:
             self.wx = self.add_weight(
                 name='Wx',
-                shape=(4, input_shape[-1], self.units),
+                shape=(input_shape[-1], self.units * 4),
                 initializer=np.random.random,
                 trainable=True,
             )
             self.wh = self.add_weight(
                 name='Wh',
-                shape=(4, self.units, self.units),
+                shape=(self.units, self.units * 4),
                 initializer=np.random.random,
                 trainable=True,
             )
             if self.use_bias:
                 self.b = self.add_weight(
                     name='b',
-                    shape=(4, self.units),
+                    shape=(self.units * 4,),
                     initializer=np.zeros,
                     trainable=True,
                 )
@@ -45,7 +45,7 @@ class LSTM(Layer):
         return input_shape[0], self.units
 
     def call(self, inputs, **kwargs):
-        initial_val = ad.dot(ad.zeros_like(inputs)[:, 0, :], ad.zeros_like(self.wx[0]))
+        initial_val = ad.dot(ad.zeros_like(inputs)[:, 0, :], ad.zeros_like(self.wx[:, :self.units]))
         outputs = ad.while_loop(
             lambda body_inputs: ad.less(body_inputs[0], ad.shape(inputs)[1]),
             lambda x: self.step(inputs, x),
@@ -58,19 +58,13 @@ class LSTM(Layer):
 
     def step(self, inputs, body_inputs):
         index, cell_state, output = body_inputs
-        forget_gate = ad.dot(inputs[:, index], self.wx[0]) + ad.dot(cell_state, self.wh[0])
-        input_gate = ad.dot(inputs[:, index], self.wx[1]) + ad.dot(cell_state, self.wh[1])
-        output_gate = ad.dot(inputs[:, index], self.wx[2]) + ad.dot(cell_state, self.wh[2])
-        cell_state_hat = ad.dot(inputs[:, index], self.wx[3]) + ad.dot(cell_state, self.wh[3])
+        linear_sum = ad.dot(inputs[:, index], self.wx) + ad.dot(cell_state, self.wh)
         if self.use_bias:
-            forget_gate += self.b[0]
-            input_gate += self.b[1]
-            output_gate += self.b[2]
-            cell_state_hat += self.b[3]
-        forget_gate = ad.acts.sigmoid(forget_gate)
-        input_gate = ad.acts.sigmoid(input_gate)
-        output_gate = ad.acts.sigmoid(output_gate)
-        cell_state_hat = ad.tanh(cell_state_hat)
-        new_cell_state = forget_gate * cell_state + input_gate * cell_state_hat
+            linear_sum += self.b
+        forget_gate = ad.acts.sigmoid(linear_sum[:, :self.units])
+        input_gate = ad.acts.sigmoid(linear_sum[:, self.units:self.units * 2])
+        output_gate = ad.acts.sigmoid(linear_sum[:, self.units * 2:self.units * 3])
+        cell_state_inner = ad.tanh(linear_sum[:, self.units * 3:])
+        new_cell_state = forget_gate * cell_state + input_gate * cell_state_inner
         new_output = output_gate * ad.tanh(new_cell_state)
         return index + 1.0, new_cell_state, new_output
