@@ -21,8 +21,6 @@ class OpGetitem(Operation):
                     shape.append(None)
                 else:
                     shape.append(len(range(*s.indices(x.shape[i]))))
-            elif isinstance(s, Operation):
-                shape.append(None)
         self.shape = tuple(shape) + x.shape[len(item):]
         self.item_forward = None
         super(OpGetitem, self).__init__(**kwargs)

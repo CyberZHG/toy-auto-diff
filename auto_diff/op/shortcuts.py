@@ -8,9 +8,9 @@ __all__ = [
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape', 'pad',
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
     'square', 'exp', 'log', 'tanh',
-    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'where',
+    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'less', 'where',
     'maximum', 'minimum',
-    'map_fn',
+    'map_fn', 'while_loop',
 ]
 
 
@@ -224,6 +224,12 @@ def equal(x: Operation, y: Operation, **kwargs) -> Operation:
     return OpEqual(x, y, **kwargs)
 
 
+def less(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpLess`."""
+    from .op_less import OpLess
+    return OpLess(x, y, **kwargs)
+
+
 def where(condition: Operation, x: Optional[Operation] = None, y: Optional[Operation] = None, **kwargs) -> Operation:
     """See :class:`OpWhere`."""
     from .op_where import OpWhere
@@ -246,3 +252,13 @@ def map_fn(fn: Callable, elems: Union[Operation, Sequence[Operation]], **kwargs)
     """See :class:`OpMapFn`"""
     from .op_map_fn import OpMapFn
     return OpMapFn(fn, elems, **kwargs)
+
+
+def while_loop(cond: Callable,
+               body: callable,
+               loop_vars: Sequence[Operation],
+               output_index: int = 0,
+               **kwargs):
+    """See :class:`OpWhileLoop`"""
+    from .op_while_loop import OpWhileLoop
+    return OpWhileLoop(cond, body, loop_vars, output_index, **kwargs)

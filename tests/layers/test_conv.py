@@ -27,6 +27,36 @@ class TestConv2D(TestCase):
         output = model.predict_on_batch(val)
         self.assertEqual((2, 5, 5, 4), output.shape)
 
+    def test_dilation_same_shape(self):
+        input_layer = ad.layers.Input(shape=(None, 5, 5, 3))
+        conv_layer = ad.layers.Conv2D(
+            kernel_size=(3, 5),
+            strides=(1, 1),
+            filters=4,
+            dilation_rate=(2, 3),
+            padding='same',
+            activation=ad.acts.relu,
+        )(input_layer)
+        model = ad.models.Model(inputs=input_layer, outputs=conv_layer)
+        val = np.random.random((2, 5, 5, 3))
+        output = model.predict_on_batch(val)
+        self.assertEqual((2, 5, 5, 4), output.shape)
+
+    def test_dilation_valid_shape(self):
+        input_layer = ad.layers.Input(shape=(None, 7, 7, 3))
+        conv_layer = ad.layers.Conv2D(
+            kernel_size=3,
+            strides=2,
+            filters=4,
+            dilation_rate=2,
+            padding='same',
+            activation=ad.acts.relu,
+        )(input_layer)
+        model = ad.models.Model(inputs=input_layer, outputs=conv_layer)
+        val = np.random.random((2, 5, 5, 3))
+        output = model.predict_on_batch(val)
+        self.assertEqual((2, 3, 3, 4), output.shape)
+
     def test_fit(self):
         input_layer = ad.layers.Input(shape=(None, None, None, 2))
         conv_layer = ad.layers.Conv2D(kernel_size=3, filters=2, padding='same', activation=ad.acts.relu)(input_layer)

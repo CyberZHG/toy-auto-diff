@@ -3,16 +3,16 @@ import auto_diff as ad
 from .util import NumGradCheck
 
 
-class TestOpEqual(NumGradCheck):
+class TestOpLess(NumGradCheck):
 
     @staticmethod
     def _gen_random_and_result(x_shape, y_shape):
-        x_val = np.random.randint(0, 10, x_shape)
-        y_val = np.random.randint(0, 10, y_shape)
+        x_val = np.random.random(x_shape)
+        y_val = np.random.random(y_shape)
         x = ad.variable(x_val, name='X%s' % str(x_shape))
         y = ad.variable(y_val, name='Y%s' % str(y_shape))
-        z = ad.equal(x, y)
-        expect = (x_val == y_val).astype(dtype=np.float64)
+        z = ad.less(x, y)
+        expect = (x_val < y_val).astype(dtype=np.float64)
         return z, [x, y], expect
 
     def test_forward(self):
