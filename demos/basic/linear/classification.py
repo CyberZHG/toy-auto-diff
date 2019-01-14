@@ -11,7 +11,7 @@ def gen_config(base_config: dict = None) -> dict:
         'input_len': config['input_len'],
         'hidden_dim': np.random.randint(10, 50),
         'batch_size': np.random.randint(32, 500),
-        'learning_rate': 1e-4,
+        'learning_rate': 1e-3,
         'expected_w': (np.random.random(config['input_len']) - 0.5) * 10.0,
         'expected_b': (np.random.random() - 0.5) * 10.0,
     }
@@ -56,10 +56,11 @@ def data_generator(config: dict):
     :return: Linear data for placeholders.
     """
     batch_size = config['batch_size']
+    classes = np.random.randint(0, 1, (batch_size,)) - 0.5
     while True:
         batch_x = (np.random.random((batch_size, config['input_len'])) - 0.5) * 10.0
-        linear_y = np.dot(batch_x, config['expected_w']) + config['expected_b']
-        linear_y += np.random.random(batch_size) * 0.1  # Add random noise
+        linear_y = np.dot(batch_x, config['expected_w']) + config['expected_b'] + classes
+        linear_y += (np.random.random(batch_size) - 0.5) * 0.1  # Add random noise
         batch_y = np.zeros((batch_size, 2))
         batch_y[np.arange(batch_size), (linear_y > 0.0).astype(np.int)] = 1.0
         yield batch_x, batch_y
@@ -83,13 +84,12 @@ def train_model(loss: ad.Operation, placeholders: list, variables: list, config:
         sess.prepare()
         feed_dict = {x: batch_x, y_true: batch_y}
         loss_val = sess.run(loss, feed_dict=feed_dict)
-        for var in variables:
-            var.clear_gradient()
         loss.backward()
+        lr = learning_rate / (1.0 + 1e-5 * step)
         for var in variables:
-            var.update_add(-learning_rate * var.gradient)
+            var.update_add(-lr * var.gradient)
         if verbose:
-            print('Step %d - Loss %.4f' % (step, loss_val), end='\r')
+            print('\rStep %d - Loss %.4f' % (step, loss_val), end='')
             if loss_val < 1e-4:
                 break
     if verbose:

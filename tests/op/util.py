@@ -12,8 +12,6 @@ class NumGradCheck(TestCase):
                                variables: List[OpVariable],
                                atol=1e-6):
         eps = 1e-8
-        for variable in variables:
-            variable.clear_gradient()
         func.forward(feed_dict)
         func.backward()
         for variable in variables:

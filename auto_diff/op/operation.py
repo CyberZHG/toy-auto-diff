@@ -81,16 +81,42 @@ class Operation(object):
         """Forward operation to be implemented."""
         raise NotImplementedError('Forward operation not implemented')
 
-    def backward(self, gradient: Optional[np.ndarray] = None) -> None:
-        """Update gradients recursively.
-
-        :param gradient: Current gradient.
-        """
-        if gradient is None:
-            gradient = np.ones_like(self.output)
-        self._backward(gradient)
-        for i in range(len(self.inputs)):
-            self.inputs[i].backward(self.gradients[i])
+    def backward(self) -> None:
+        """Update gradients recursively."""
+        inputs, degrees, operations = {self: []}, {self: 0}, [self]
+        front = 0
+        while front < len(operations):
+            current = operations[front]
+            for grad_index, op in enumerate(current.inputs):
+                if op in degrees:
+                    inputs[op].append((current, grad_index))
+                    degrees[op] += 1
+                else:
+                    inputs[op] = [(current, grad_index)]
+                    degrees[op] = 1
+                    operations.append(op)
+            front += 1
+        inv_degrees = {}
+        for op, degree in degrees.items():
+            if degree not in inv_degrees:
+                while len(inv_degrees) <= degree:
+                    inv_degrees[len(inv_degrees)] = set()
+            inv_degrees[degree].add(op)
+        while len(inv_degrees[0]):
+            for op in inv_degrees[0]:
+                inv_degrees[0].remove(op)
+                if op == self:
+                    self._backward(np.ones_like(self.output))
+                else:
+                    gradient = 0.0
+                    for input_op, grad_index in inputs[op]:
+                        gradient += input_op.gradients[grad_index]
+                    op._backward(gradient)
+                for input_op in op.inputs:
+                    inv_degrees[degrees[input_op]].remove(input_op)
+                    degrees[input_op] -= 1
+                    inv_degrees[degrees[input_op]].add(input_op)
+                break
 
     def _backward(self, gradient: np.ndarray) -> None:
         """Backward operation to be implemented."""

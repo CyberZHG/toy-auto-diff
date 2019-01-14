@@ -74,13 +74,12 @@ def train_model(loss: ad.Operation, placeholders: list, variables: list, config:
         sess.prepare()
         feed_dict = {x: batch_x, y: batch_y}
         loss_val = sess.run(loss, feed_dict=feed_dict)
-        for var in variables:
-            var.clear_gradient()
         loss.backward()
+        lr = learning_rate / (1.0 + 1e-5 * step)
         for var in variables:
-            var.update_add(-learning_rate * var.gradient)
+            var.update_add(-lr * var.gradient)
         if verbose:
-            print('Step %d - Loss %.4f' % (step, loss_val), end='\r')
+            print('\rStep %d - Loss %.4f' % (step, loss_val), end='')
             if loss_val < 1e-4:
                 break
     if verbose:

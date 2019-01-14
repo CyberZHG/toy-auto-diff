@@ -98,8 +98,6 @@ class Model(ad.layers.Layer):
         feed_dict[self._output_placeholders] = y
         self._session.prepare()
         self._session.run(self._loss, feed_dict=feed_dict)
-        for weight in self.trainable_weights:
-            weight.clear_gradient()
         self._loss.backward()
         self._optimizer.update(self.trainable_weights, self._session)
 

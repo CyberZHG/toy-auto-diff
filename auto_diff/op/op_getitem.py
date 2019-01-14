@@ -13,7 +13,7 @@ class OpGetitem(Operation):
             'item': item,
         }
         shape = []
-        if isinstance(item, (int, Operation)):
+        if isinstance(item, (int, slice, Operation)):
             item = (item,)
         for i, s in enumerate(item):
             if isinstance(s, slice):
@@ -28,7 +28,7 @@ class OpGetitem(Operation):
     def _forward(self, feed_dict: Mapping[Union[str, OpPlaceholder], np.ndarray]) -> np.ndarray:
         self.item_forward = []
         item = self.params['item']
-        if isinstance(item, (int, Operation)):
+        if isinstance(item, (int, slice, Operation)):
             item = (item,)
         for s in item:
             if isinstance(s, int):
