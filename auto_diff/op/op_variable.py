@@ -1,4 +1,4 @@
-from typing import Mapping, Union, Callable
+from typing import Mapping, Union, Callable, Optional
 import numpy as np
 from .operation import Operation
 from .op_placeholder import OpPlaceholder
@@ -7,7 +7,10 @@ from .op_placeholder import OpPlaceholder
 class OpVariable(Operation):
     """Contains weights that could be updated."""
 
-    def __init__(self, initializer: Union[Callable, int, float, list, np.ndarray], shape: tuple = None, **kwargs):
+    def __init__(self,
+                 initializer: Union[Callable, int, float, list, np.ndarray],
+                 shape: Optional[Union[int, tuple]] = None,
+                 **kwargs):
         """
         :param initializer: A function that accepts shape as its arguments or a numpy array.
         :param shape: Must be provided if the initializer is a function.
@@ -16,7 +19,8 @@ class OpVariable(Operation):
         if callable(initializer):
             self.x = None
             self.initializer = initializer
-            self.shape = shape
+            if isinstance(shape, int):
+                shape = (shape,)
         elif np.isscalar(initializer):
             self.x = float(initializer)
             shape = ()

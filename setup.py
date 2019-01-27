@@ -12,6 +12,7 @@ setup(
     long_description=open('README.rst', 'r').read(),
     install_requires=[
         'numpy',
+        'scipy',
     ],
     classifiers=(
         "Programming Language :: Python :: 3.7",

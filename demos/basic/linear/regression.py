@@ -30,7 +30,11 @@ def gen_linear_model(config: dict, verbose=False):
     x = ad.placeholder(shape=(None, config['input_len']), name='X')
     y = ad.placeholder(shape=(None,), name='Y')
 
-    w = ad.variable(np.random.random(config['input_len']), name='W')
+    w = ad.variable(
+        initializer=ad.inits.random_normal(),
+        shape=config['input_len'],
+        name='W',
+    )
     b = ad.variable(0.0, name='b')
 
     y_pred = ad.dot(x, w) + b

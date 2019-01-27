@@ -1,6 +1,5 @@
 from typing import Union, Sequence
 import auto_diff as ad
-import numpy as np
 from .layer import Layer
 
 
@@ -12,6 +11,8 @@ class Conv2D(Layer):
                  strides: Union[int, Sequence] = 1,
                  dilation_rate: Union[int, Sequence] = 1,
                  padding='valid',
+                 kernel_initializer=ad.inits.glorot_normal,
+                 bias_initializer=ad.inits.zeros,
                  activation=None,
                  use_bias=True,
                  **kwargs):
@@ -34,6 +35,8 @@ class Conv2D(Layer):
             self.dilation_rate[1] * (self.kernel_size[1] - 1) + 1,
         )
         self.padding = padding
+        self.kernel_initializer = kernel_initializer
+        self.bias_initializer = bias_initializer
         self.use_bias = use_bias
         if padding == 'valid':
             self.pad_width = (0, 0)
@@ -52,14 +55,14 @@ class Conv2D(Layer):
             self.w = self.add_weight(
                 name='W',
                 shape=(self.kernel_size[0] * self.kernel_size[1] * input_shape[-1], self.filters),
-                initializer=np.random.random,
+                initializer=self.kernel_initializer,
                 trainable=True,
             )
             if self.use_bias:
                 self.b = self.add_weight(
                     name='b',
                     shape=(self.filters,),
-                    initializer=np.zeros,
+                    initializer=self.bias_initializer,
                     trainable=True,
                 )
         super(Conv2D, self).build(input_shape)

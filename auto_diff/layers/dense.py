@@ -1,14 +1,21 @@
 import auto_diff as ad
-import numpy as np
 from .layer import Layer
 
 
 class Dense(Layer):
 
-    def __init__(self, output_dim, use_bias=True, activation=None, **kwargs):
+    def __init__(self,
+                 output_dim,
+                 use_bias=True,
+                 kernel_initializer=ad.inits.glorot_normal,
+                 bias_initializer=ad.inits.zeros,
+                 activation=None,
+                 **kwargs):
         super(Dense, self).__init__(**kwargs)
         self.output_dim = output_dim
         self.use_bias = use_bias
+        self.kernel_initializer = kernel_initializer
+        self.bias_initializer = bias_initializer
         self.activation = activation
         self.w, self.b = None, None
 
@@ -17,14 +24,14 @@ class Dense(Layer):
             self.w = self.add_weight(
                 name='W',
                 shape=(input_shape[-1], self.output_dim),
-                initializer=np.random.random,
+                initializer=self.kernel_initializer,
                 trainable=True,
             )
             if self.use_bias:
                 self.b = self.add_weight(
                     name='b',
                     shape=(self.output_dim,),
-                    initializer=np.zeros,
+                    initializer=self.bias_initializer,
                     trainable=True,
                 )
         super(Dense, self).build(input_shape)

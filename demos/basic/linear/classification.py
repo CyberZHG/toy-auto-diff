@@ -31,13 +31,29 @@ def gen_linear_model(config: dict, verbose=False):
     x = ad.placeholder(shape=(None, config['input_len']), name='X')
     y = ad.placeholder(shape=(None,), name='Y')
 
-    w1 = ad.variable(np.random.random((config['input_len'], config['hidden_dim'])), name='W1')
-    b1 = ad.variable(np.zeros(config['hidden_dim']), name='b1')
+    w1 = ad.variable(
+        initializer=ad.inits.random_normal(),
+        shape=(config['input_len'], config['hidden_dim']),
+        name='W1',
+    )
+    b1 = ad.variable(
+        initializer=ad.inits.zeros,
+        shape=config['hidden_dim'],
+        name='b1',
+    )
 
     v = ad.acts.leaky_relu(ad.dot(x, w1) + b1)
 
-    w2 = ad.variable(np.random.random((config['hidden_dim'], 2)), name='W2')
-    b2 = ad.variable(np.zeros(2), name='b2')
+    w2 = ad.variable(
+        initializer=ad.inits.random_normal(),
+        shape=(config['hidden_dim'], 2),
+        name='W2',
+    )
+    b2 = ad.variable(
+        initializer=ad.inits.zeros,
+        shape=2,
+        name='b2',
+    )
 
     y_pred = ad.acts.softmax(ad.dot(v, w2) + b2)
 

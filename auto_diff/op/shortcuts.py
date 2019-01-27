@@ -68,7 +68,9 @@ def placeholder(shape: Sequence[int], **kwargs) -> Operation:
     return OpPlaceholder(shape, **kwargs)
 
 
-def variable(initializer: Union[Callable, int, float, list, np.ndarray], shape: tuple = None, **kwargs) -> 'OpVariable':
+def variable(initializer: Union[Callable, int, float, list, np.ndarray],
+             shape: Optional[Union[int, tuple]] = None,
+             **kwargs) -> 'OpVariable':
     """See :class:`OpVariable`."""
     from .op_variable import OpVariable
     return OpVariable(initializer, shape, **kwargs)

@@ -1,5 +1,4 @@
 import auto_diff as ad
-import numpy as np
 from .layer import Layer
 
 
@@ -9,11 +8,15 @@ class LSTM(Layer):
                  units: int,
                  return_sequences=False,
                  use_bias: bool = True,
+                 kernel_initializer=ad.inits.glorot_normal,
+                 bias_initializer=ad.inits.zeros,
                  **kwargs):
         super(LSTM, self).__init__(**kwargs)
         self.units = units
         self.return_sequences = return_sequences
         self.use_bias = use_bias
+        self.kernel_initializer = kernel_initializer
+        self.bias_initializer = bias_initializer
         self.wx, self.wh, self.b = None, None, None
 
     def build(self, input_shape):
@@ -21,20 +24,20 @@ class LSTM(Layer):
             self.wx = self.add_weight(
                 name='Wx',
                 shape=(input_shape[-1], self.units * 4),
-                initializer=np.random.random,
+                initializer=self.kernel_initializer,
                 trainable=True,
             )
             self.wh = self.add_weight(
                 name='Wh',
                 shape=(self.units, self.units * 4),
-                initializer=np.random.random,
+                initializer=self.kernel_initializer,
                 trainable=True,
             )
             if self.use_bias:
                 self.b = self.add_weight(
                     name='b',
                     shape=(self.units * 4,),
-                    initializer=np.zeros,
+                    initializer=self.bias_initializer,
                     trainable=True,
                 )
         super(LSTM, self).build(input_shape)
@@ -76,11 +79,15 @@ class GRU(Layer):
                  units: int,
                  return_sequences=False,
                  use_bias: bool = True,
+                 kernel_initializer=ad.inits.glorot_normal,
+                 bias_initializer=ad.inits.zeros,
                  **kwargs):
         super(GRU, self).__init__(**kwargs)
         self.units = units
         self.return_sequences = return_sequences
         self.use_bias = use_bias
+        self.kernel_initializer = kernel_initializer
+        self.bias_initializer = bias_initializer
         self.wx, self.wh, self.b = None, None, None
 
     def build(self, input_shape):
@@ -88,20 +95,20 @@ class GRU(Layer):
             self.wx = self.add_weight(
                 name='Wx',
                 shape=(input_shape[-1], self.units * 3),
-                initializer=np.random.random,
+                initializer=self.kernel_initializer,
                 trainable=True,
             )
             self.wh = self.add_weight(
                 name='Wh',
                 shape=(self.units, self.units * 3),
-                initializer=np.random.random,
+                initializer=self.kernel_initializer,
                 trainable=True,
             )
             if self.use_bias:
                 self.b = self.add_weight(
                     name='b',
                     shape=(self.units * 3,),
-                    initializer=np.zeros,
+                    initializer=self.bias_initializer,
                     trainable=True,
                 )
         super(GRU, self).build(input_shape)
