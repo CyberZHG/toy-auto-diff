@@ -1,4 +1,14 @@
+import codecs
 from setuptools import setup, find_packages
+
+
+with codecs.open('README.md', 'r', 'utf8') as reader:
+    long_description = reader.read()
+
+
+with codecs.open('requirements.txt', 'r', 'utf8') as reader:
+    install_requires = list(map(lambda x: x.strip(), reader.readlines()))
+
 
 setup(
     name='toy-auto-diff',
@@ -9,11 +19,9 @@ setup(
     author='CyberZHG',
     author_email='CyberZHG@gmail.com',
     description='Toy demonstrations of auto differentiations.',
-    long_description=open('README.rst', 'r').read(),
-    install_requires=[
-        'numpy',
-        'scipy',
-    ],
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    install_requires=install_requires,
     classifiers=(
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
