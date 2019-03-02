@@ -3,20 +3,28 @@ import numpy as np
 import auto_diff as ad
 
 
-class TestDense(TestCase):
+class TestBatchNorm(TestCase):
 
-    def test_output(self):
-        input_layer = ad.layers.Input(shape=(None, 4))
-        dense_layer = ad.layers.Dense(output_dim=3, activation=ad.acts.relu)(input_layer)
+    def test_no_moving(self):
+        input_layer = ad.layers.Input(shape=(None, 5))
+        normal_layer = ad.layers.BatchNorm()(input_layer)
+        dense_layer = ad.layers.Dense(output_dim=2, activation=ad.acts.softmax)(normal_layer)
         model = ad.models.Model(inputs=input_layer, outputs=dense_layer)
-        val = np.random.random((3, 4))
-        output = model.predict_on_batch(val)
-        self.assertEqual((3, 3), output.shape)
+        model.build(
+            optimizer=ad.optims.Adam(),
+            losses=ad.losses.cross_entropy,
+        )
+
+        input_vals = np.random.random((2, 5))
+        first = model.predict_on_batch(input_vals)
+        second = model.predict_on_batch(input_vals)
+        self.assertTrue(np.allclose(first, second))
 
     def test_fit(self):
         np.random.seed(0xcafe)
         input_layer = ad.layers.Input(shape=(None, 5))
-        dense_layer = ad.layers.Dense(output_dim=2, activation=ad.acts.softmax)(input_layer)
+        normal_layer = ad.layers.BatchNorm()(input_layer)
+        dense_layer = ad.layers.Dense(output_dim=2, activation=ad.acts.softmax)(normal_layer)
         model = ad.models.Model(inputs=input_layer, outputs=dense_layer)
         model.build(
             optimizer=ad.optims.Adam(),

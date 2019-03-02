@@ -16,6 +16,7 @@ class Model(ad.layers.Layer):
         self._losses = None
         self._loss = None
         self._layers = None
+        self._updates = []
         self._output_placeholders = None
         self._session = ad.sess.Session()
 
@@ -51,6 +52,7 @@ class Model(ad.layers.Layer):
             for layer in self._layers.values():
                 self._trainable_weights += layer.trainable_weights
                 self._non_trainable_weights += layer.non_trainable_weights
+                self._updates += layer.updates
 
             self._loss = 0.0
             if isinstance(self.outputs, list):
@@ -99,6 +101,8 @@ class Model(ad.layers.Layer):
         self._session.prepare()
         self._session.run(self._loss, feed_dict=feed_dict)
         self._loss.backward()
+        for var, update in self.updates:
+            var.update(update.forward(feed_dict=feed_dict))
         self._optimizer.update(self.trainable_weights, self._session)
 
     def predict_on_batch(self, x: Union[np.ndarray, List[np.ndarray]]) -> Union[np.ndarray, List[np.ndarray]]:

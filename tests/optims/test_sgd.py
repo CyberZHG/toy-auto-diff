@@ -21,6 +21,7 @@ class TestSGD(TestCase):
         self.assertEqual([1.0, 0.0], actual)
 
     def test_default(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.SGD(lr=1e-3),
@@ -29,6 +30,7 @@ class TestSGD(TestCase):
         self._test_fitting(model)
 
     def test_momentum(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.SGD(momentum=0.9, lr=1e-3),
@@ -37,6 +39,7 @@ class TestSGD(TestCase):
         self._test_fitting(model)
 
     def test_decay(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.SGD(decay=1e-3, lr=1e-3),
@@ -45,6 +48,7 @@ class TestSGD(TestCase):
         self._test_fitting(model)
 
     def test_nesterov(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.SGD(lr=1e-3, nesterov=True),
@@ -53,6 +57,7 @@ class TestSGD(TestCase):
         self._test_fitting(model)
 
     def test_all(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.SGD(momentum=0.9, decay=1e-3, lr=1e-3, nesterov=True),

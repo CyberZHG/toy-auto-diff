@@ -22,6 +22,7 @@ class TestLSTM(TestCase):
         self.assertEqual((2, 7, 5), output.shape)
 
     def test_fit(self):
+        np.random.seed(0xcafe)
         input_layer = ad.layers.Input(shape=(None, None, 3))
         lstm_layer = ad.layers.LSTM(units=7, return_sequences=True)(input_layer)
         lstm_layer = ad.layers.LSTM(units=2)(lstm_layer)
@@ -63,6 +64,7 @@ class TestGRU(TestCase):
         self.assertEqual((2, 7, 5), output.shape)
 
     def test_fit(self):
+        np.random.seed(0xcafe)
         input_layer = ad.layers.Input(shape=(None, None, 3))
         lstm_layer = ad.layers.GRU(units=7, return_sequences=True)(input_layer)
         lstm_layer = ad.layers.GRU(units=2)(lstm_layer)

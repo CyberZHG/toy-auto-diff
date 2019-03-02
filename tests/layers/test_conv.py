@@ -69,6 +69,7 @@ class TestConv2D(TestCase):
         self.assertEqual((2, 3, 3, 4), output.shape)
 
     def test_fit(self):
+        np.random.seed(0xcafe)
         input_layer = ad.layers.Input(shape=(None, None, None, 2))
         conv_layer = ad.layers.Conv2D(kernel_size=3, filters=2, padding='same', activation=ad.acts.relu)(input_layer)
         model = ad.models.Model(inputs=input_layer, outputs=conv_layer)

@@ -13,9 +13,10 @@ class TestDropout(TestCase):
         y = model.predict_on_batch(x)
         self.assertTrue(np.allclose(x, y))
 
-    def test_fit_half(self):
+    def test_fit(self):
+        np.random.seed(0xcafe)
         input_layer = ad.layers.Input(shape=(None, 5))
-        drop_layer = ad.layers.Dropout(rate=0.5)(input_layer)
+        drop_layer = ad.layers.Dropout(rate=0.1)(input_layer)
         dense_layer = ad.layers.Dense(output_dim=2, activation=ad.acts.softmax)(drop_layer)
         model = ad.models.Model(inputs=input_layer, outputs=dense_layer)
         model.build(
@@ -31,6 +32,7 @@ class TestDropout(TestCase):
         self.assertEqual([1.0, 0.0], actual)
 
     def test_fit_zero(self):
+        np.random.seed(0xcafe)
         input_layer = ad.layers.Input(shape=(None, 5))
         drop_layer = ad.layers.Dropout(rate=0.0)(input_layer)
         dense_layer = ad.layers.Dense(output_dim=2, activation=ad.acts.softmax)(drop_layer)
@@ -48,6 +50,7 @@ class TestDropout(TestCase):
         self.assertEqual([1.0, 0.0], actual)
 
     def test_fit_noise_shape(self):
+        np.random.seed(0xcafe)
         input_layer = ad.layers.Input(shape=(None, 5))
         drop_layer = ad.layers.Dropout(rate=0.5, noise_shape=(1, 5))(input_layer)
         dense_layer = ad.layers.Dense(output_dim=2, activation=ad.acts.softmax)(drop_layer)

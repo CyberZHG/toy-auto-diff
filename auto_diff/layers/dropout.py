@@ -11,7 +11,6 @@ class Dropout(Layer):
         super(Dropout, self).__init__(**kwargs)
         self.rate = rate
         self.noise_shape = noise_shape
-        self.in_train_phase = ad.in_train_phase()
 
     def compute_output_shape(self, input_shape):
         return input_shape
@@ -22,7 +21,7 @@ class Dropout(Layer):
                 noise_shape = self.noise_shape
             else:
                 noise_shape = ad.shape(inputs)
-            return ad.where(self.in_train_phase,
+            return ad.where(ad.in_train_phase(),
                             inputs * (ad.random(noise_shape) > self.rate),
                             inputs)
 

@@ -21,6 +21,7 @@ class TestAdam(TestCase):
         self.assertEqual([1.0, 0.0], actual)
 
     def test_default(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.Adam(lr=1e-3),
@@ -29,6 +30,7 @@ class TestAdam(TestCase):
         self._test_fitting(model)
 
     def test_decay(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.Adam(lr=1e-3, decay=1e-3),
@@ -37,6 +39,7 @@ class TestAdam(TestCase):
         self._test_fitting(model)
 
     def test_amsgrad(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.Adam(lr=1e-3, amsgrad=True),
@@ -45,6 +48,7 @@ class TestAdam(TestCase):
         self._test_fitting(model)
 
     def test_all(self):
+        np.random.seed(0xcafe)
         model = self._create_model()
         model.build(
             optimizer=ad.optims.Adam(lr=1e-3, decay=1e-3, amsgrad=True),

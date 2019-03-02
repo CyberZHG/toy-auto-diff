@@ -12,6 +12,7 @@ class Layer(object):
         self._outputs = None
         self._input_shapes = None
         self._output_shapes = None
+        self._updates = []
 
     def build(self, input_shape):
         self._built = True
@@ -65,3 +66,10 @@ class Layer(object):
     @property
     def output_shapes(self):
         return self._output_shapes
+
+    @property
+    def updates(self):
+        return self._updates
+
+    def add_update(self, var: ad.OpVariable, update: ad.Operation):
+        self.updates.append((var, update))
