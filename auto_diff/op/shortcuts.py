@@ -7,8 +7,8 @@ __all__ = [
     'ones', 'zeros', 'ones_like', 'zeros_like', 'random', 'arange',
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape', 'pad',
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
-    'square', 'exp', 'log', 'tanh',
-    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'less', 'where',
+    'square', 'sqrt', 'exp', 'log', 'tanh',
+    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'less', 'where', 'power',
     'maximum', 'minimum',
     'map_fn', 'while_loop',
 ]
@@ -166,6 +166,12 @@ def square(x: Operation, **kwargs) -> Operation:
     return OpSquare(x, **kwargs)
 
 
+def sqrt(x: Operation, **kwargs) -> Operation:
+    """See :class:`OpSqrt`."""
+    from .op_sqrt import OpSqrt
+    return OpSqrt(x, **kwargs)
+
+
 def exp(x: Operation, **kwargs) -> Operation:
     """See :class:`OpExp`."""
     from .op_exp import OpExp
@@ -236,6 +242,12 @@ def where(condition: Operation, x: Optional[Operation] = None, y: Optional[Opera
     """See :class:`OpWhere`."""
     from .op_where import OpWhere
     return OpWhere(condition, x, y, **kwargs)
+
+
+def power(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpPower`."""
+    from .op_power import OpPower
+    return OpPower(x, y, **kwargs)
 
 
 def maximum(x: Operation, y: Operation, **kwargs) -> Operation:

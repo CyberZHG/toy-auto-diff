@@ -46,7 +46,7 @@ class Conv2D(Layer):
                 self.dilated_kernel_size[1] // 2,
             )
         else:
-            self.pad_width = (0, 0)
+            raise NotImplementedError('Unknown padding: %s' % str(padding))
         self.activation = activation
         self.w, self.b = None, None
 

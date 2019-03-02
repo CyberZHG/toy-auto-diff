@@ -11,6 +11,9 @@ class TestConstants(TestCase):
         self.assertEqual(0.0, np.max(weights))
         self.assertEqual(0.0, np.min(weights))
 
+        weights = ad.variable(ad.inits.zeros, shape=3)
+        self.assertEqual((3,), weights.shape)
+
     def test_ones(self):
         weights = ad.inits.ones(shape=(3, 5))
         self.assertEqual((3, 5), weights.shape)

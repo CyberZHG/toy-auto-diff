@@ -5,11 +5,11 @@ from .optim import Optimizer
 
 class SGD(Optimizer):
 
-    def __init__(self, momentum=0.0, decay=0.0, lr=1e-3, nesterov=False, **kwargs):
+    def __init__(self, lr=1e-3, momentum=0.0, decay=0.0, nesterov=False, **kwargs):
+        self.lr = lr
         self.momentum = momentum
         self.moments = None
         self.decay = decay
-        self.lr = lr
         self.nesterov = nesterov
         self.step_num = 0.0
         super(SGD, self).__init__(**kwargs)

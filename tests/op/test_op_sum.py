@@ -72,6 +72,9 @@ class TestOpSum(NumGradCheck):
         self.numeric_gradient_check(y, {}, [w])
 
     def test_backward_keepdims(self):
+        w = ad.variable(np.random.random(), name='W')
+        y = ad.sum(w, keepdims=True)
+        self.numeric_gradient_check(y, {}, [w])
         val = np.random.random((3, 5))
         w = ad.variable(val, name='W')
         y = ad.sum(w.transpose(), keepdims=True)

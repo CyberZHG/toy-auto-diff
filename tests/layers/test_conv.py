@@ -27,6 +27,17 @@ class TestConv2D(TestCase):
         output = model.predict_on_batch(val)
         self.assertEqual((2, 5, 5, 4), output.shape)
 
+    def test_invalid_padding(self):
+        with self.assertRaises(NotImplementedError):
+            input_layer = ad.layers.Input(shape=(None, 5, 5, 3))
+            ad.layers.Conv2D(
+                kernel_size=(3, 5),
+                strides=(1, 1),
+                filters=4,
+                padding='invalid',
+                activation=ad.acts.relu,
+            )(input_layer)
+
     def test_dilation_same_shape(self):
         input_layer = ad.layers.Input(shape=(None, 5, 5, 3))
         conv_layer = ad.layers.Conv2D(
@@ -62,7 +73,7 @@ class TestConv2D(TestCase):
         conv_layer = ad.layers.Conv2D(kernel_size=3, filters=2, padding='same', activation=ad.acts.relu)(input_layer)
         model = ad.models.Model(inputs=input_layer, outputs=conv_layer)
         model.build(
-            optimizer=ad.optims.SGD(lr=1e-3),
+            optimizer=ad.optims.Adam(lr=1e-3),
             losses=ad.losses.mean_square_error,
         )
 

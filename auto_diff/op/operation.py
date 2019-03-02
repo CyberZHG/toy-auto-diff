@@ -26,7 +26,7 @@ class Operation(object):
         if not hasattr(self, 'params'):
             self.params: dict = {}
         self.values: Sequence[np.ndarray] = []
-        self.output: Operation[np.ndarray] = None
+        self.output: Optional[np.ndarray] = None
         self.gradients: Optional[Sequence[np.ndarray]] = None
         self._op_index = self.__op_counter[0]
         self.__op_counter[0] += 1
@@ -123,11 +123,8 @@ class Operation(object):
         raise NotImplementedError('Backward operation not implemented')
 
     def _broadcast_shape(self, *args: Union[int, float, 'Operation']):
-        from .op_constant import OpConstant
         self.shape = ()
         for x in args:
-            if not isinstance(x, Operation):
-                x = OpConstant(x)
             if self.isscalar():
                 self.shape = x.shape
                 continue
