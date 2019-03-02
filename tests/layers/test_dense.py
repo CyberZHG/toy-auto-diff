@@ -18,7 +18,7 @@ class TestDense(TestCase):
         dense_layer = ad.layers.Dense(output_dim=2, activation=ad.acts.softmax)(input_layer)
         model = ad.models.Model(inputs=input_layer, outputs=dense_layer)
         model.build(
-            optimizer=ad.optims.Adam(momentum=0.9, decay=1e-3, lr=1e-3, nesterov=True),
+            optimizer=ad.optims.Adam(),
             losses=ad.losses.cross_entropy,
         )
 

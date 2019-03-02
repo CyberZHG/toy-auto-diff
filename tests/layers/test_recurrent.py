@@ -27,7 +27,7 @@ class TestLSTM(TestCase):
         lstm_layer = ad.layers.LSTM(units=2)(lstm_layer)
         model = ad.models.Model(inputs=input_layer, outputs=lstm_layer)
         model.build(
-            optimizer=ad.optims.Adam(lr=1e-3, momentum=0.9),
+            optimizer=ad.optims.Adam(lr=1e-3),
             losses=ad.losses.mean_square_error,
         )
 
@@ -68,7 +68,7 @@ class TestGRU(TestCase):
         lstm_layer = ad.layers.GRU(units=2)(lstm_layer)
         model = ad.models.Model(inputs=input_layer, outputs=lstm_layer)
         model.build(
-            optimizer=ad.optims.Adam(lr=1e-3, momentum=0.9),
+            optimizer=ad.optims.Adam(lr=1e-3),
             losses=ad.losses.mean_square_error,
         )
 

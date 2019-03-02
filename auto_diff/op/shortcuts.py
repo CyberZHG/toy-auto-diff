@@ -8,9 +8,9 @@ __all__ = [
     'transpose', 'reshape', 'flatten', 'expand_dims', 'squeeze', 'shape', 'pad',
     'sum', 'prod', 'mean', 'max', 'min', 'argmax',
     'square', 'sqrt', 'exp', 'log', 'tanh',
-    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'less', 'where', 'power',
+    'add', 'subtract', 'multiply', 'divide', 'dot', 'negative', 'equal', 'less', 'greater', 'where', 'power',
     'maximum', 'minimum',
-    'map_fn', 'while_loop',
+    'map_fn', 'while_loop', 'in_train_phase',
 ]
 
 
@@ -47,7 +47,7 @@ def zeros_like(x: Operation, **kwargs) -> Operation:
     return OpZerosLike(x, **kwargs)
 
 
-def random(shape: Union[int, Sequence[int]], **kwargs) -> Operation:
+def random(shape: Union[int, Sequence[int], 'OpShape'], **kwargs) -> Operation:
     """See :class:`OpRandom`."""
     from .op_random import OpRandom
     return OpRandom(shape, **kwargs)
@@ -238,6 +238,12 @@ def less(x: Operation, y: Operation, **kwargs) -> Operation:
     return OpLess(x, y, **kwargs)
 
 
+def greater(x: Operation, y: Operation, **kwargs) -> Operation:
+    """See :class:`OpGreater`."""
+    from .op_greater import OpGreater
+    return OpGreater(x, y, **kwargs)
+
+
 def where(condition: Operation, x: Optional[Operation] = None, y: Optional[Operation] = None, **kwargs) -> Operation:
     """See :class:`OpWhere`."""
     from .op_where import OpWhere
@@ -276,3 +282,9 @@ def while_loop(cond: Callable,
     """See :class:`OpWhileLoop`"""
     from .op_while_loop import OpWhileLoop
     return OpWhileLoop(cond, body, loop_vars, output_index, **kwargs)
+
+
+def in_train_phase(**kwargs):
+    """See :class:`OpInTrainPhase`"""
+    from .op_in_train_phase import OpInTrainPhase
+    return OpInTrainPhase(**kwargs)

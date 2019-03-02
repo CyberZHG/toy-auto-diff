@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.stats
+import auto_diff as ad
 
 
 __all__ = [

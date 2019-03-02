@@ -32,6 +32,7 @@ class Operation(object):
         self.__op_counter[0] += 1
         self._last_step = -1
         self._last_forward = None
+        self._enable_cache = True
 
     @property
     def name(self) -> str:
@@ -68,11 +69,11 @@ class Operation(object):
         """
         if feed_dict is None:
             feed_dict = {}
-        if self.KEY_STEP in feed_dict and feed_dict[self.KEY_STEP] == self._last_step:
+        if self._enable_cache and self.KEY_STEP in feed_dict and feed_dict[self.KEY_STEP] == self._last_step:
             return self._last_forward
         self.values = [inp.forward(feed_dict) for inp in self.inputs]
         self.output = self._forward(feed_dict)
-        if self.KEY_STEP in feed_dict:
+        if self._enable_cache and self.KEY_STEP in feed_dict:
             self._last_step = feed_dict[self.KEY_STEP]
             self._last_forward = self.output
         return self.output
@@ -292,6 +293,22 @@ class Operation(object):
         """See :class:`OpNegative`."""
         from .op_negative import OpNegative
         return OpNegative(self)
+
+    def __lt__(self, other):
+        """See :class:`OpLess`."""
+        from .op_less import OpLess
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
+        return OpLess(self, other)
+
+    def __gt__(self, other):
+        """See :class:`OpGreater`."""
+        from .op_greater import OpGreater
+        from .op_constant import OpConstant
+        if not isinstance(other, Operation):
+            other = OpConstant(other)
+        return OpGreater(self, other)
 
     def __getitem__(self, item) -> 'Operation':
         """See :class:`OpGetitem`."""

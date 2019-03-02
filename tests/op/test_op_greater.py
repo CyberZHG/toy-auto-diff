@@ -3,7 +3,7 @@ import auto_diff as ad
 from .util import NumGradCheck
 
 
-class TestOpLess(NumGradCheck):
+class TestOpGreater(NumGradCheck):
 
     @staticmethod
     def _gen_random_and_result(x_shape, y_shape, call_type=True):
@@ -12,10 +12,10 @@ class TestOpLess(NumGradCheck):
         x = ad.variable(x_val, name='X%s' % str(x_shape))
         y = ad.variable(y_val, name='Y%s' % str(y_shape))
         if call_type:
-            z = x < y
+            z = x > y
         else:
-            z = ad.less(x, y)
-        expect = (x_val < y_val).astype(dtype=np.float64)
+            z = ad.greater(x, y)
+        expect = (x_val > y_val).astype(dtype=np.float64)
         return z, [x, y], expect
 
     def test_forward(self):
@@ -28,17 +28,15 @@ class TestOpLess(NumGradCheck):
         self.assertEqual(expect.shape, z.shape)
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
 
-        x_val = np.random.random((3, 4))
+        x_val = np.random.random()
         x = ad.variable(x_val)
         y = x < 0.5
         actual = y.forward()
-        expect = (x_val < 0.5).astype(dtype=np.float64)
-        self.assertEqual(expect.shape, y.shape)
+        expect = x_val < 0.5
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
         y = 0.5 < x
         actual = y.forward()
-        expect = (0.5 < x_val).astype(dtype=np.float64)
-        self.assertEqual(expect.shape, y.shape)
+        expect = 0.5 < x_val
         self.assertTrue(np.allclose(expect, actual), (expect, actual))
 
     def test_backward(self):
